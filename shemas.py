@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from uuid import UUID
-from datetime import date
+from datetime import datetime
 
 class Plan(BaseModel):
     plan_id : UUID
@@ -18,8 +18,8 @@ class Evaluation(BaseModel):
     evaluation_id: UUID = Field(
         'The evaluation id, an identifier of evaluation'
     )
-    evaluation_date: date = Field(
-        'The date of evaluation', le=date.today()
+    evaluation_date: datetime = Field(
+        'The date of evaluation', le=datetime.now()
     )
     weight: float = Field(
         'The weight of member', gt=0
@@ -39,8 +39,8 @@ class Member(BaseModel):
     name: str = Field(
         'Full name of the member', max_length=100
     )
-    birth_date: date = Field(
-        'The birth date of member', le=date.today()
+    birth_date: datetime = Field(
+        'The birth date of member', le=datetime.now()
     )
     email: str = Field(
         'The email of member', max_length=100
@@ -48,8 +48,8 @@ class Member(BaseModel):
     phone: str | None = Field(
         'The phone of member', max_length=20
     )
-    inscription_date: date = Field(
-        'The date of inscription', le=date.today()
+    inscription_date: datetime = Field(
+        'The date of inscription', le=datetime.now()
     )
     plan_id: UUID = Field(
         'The plan id of member'
