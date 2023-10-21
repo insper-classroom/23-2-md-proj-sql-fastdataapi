@@ -1,16 +1,14 @@
-from enum import Enum
-
-from fastapi import FastAPI
-from pydantic import BaseModel
-
-from classes import Member, Plan
+from fastapi import FastAPI, Body, Path, Query
+from typing import Annotated
+from shemas import Member, Plan, Evaluation
 
 app = FastAPI()
 
 #Listar todos os membros: GET /members
 @app.get("/members")
-def get_all_members():
+async def get_all_members():
     print("get all members")
+    
 #Obter detalhes de um membro específico: GET /members/{id}
 @app.get("/members/{member_id}")
 def get_member(member_id):
@@ -31,9 +29,6 @@ def update_member(member_id: int, member_name: str):
 def delete_member(member_id):
     print(f"delete member of {member_id}")
     
-
-
-
 #Planos (Plans):
 #Listar todos os planos: GET /plans
 @app.get("/plans")
@@ -44,7 +39,6 @@ def get_plans():
 @app.get("/plans/{plan_id}")
 def get_plans(plan_id):
     print(f"get plan of id {plan_id}")
-
 
 #Criar um novo plano: POST /plans
 @app.post("/plans")
