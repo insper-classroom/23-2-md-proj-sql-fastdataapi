@@ -3,57 +3,188 @@ from uuid import UUID
 from datetime import datetime
 
 class Plan(BaseModel):
-    plan_id : UUID
+    plan_id : UUID = Field(
+        description='The plan id, an identifier of plan'
+    )
     plan_name : str = Field(
-        'The name of plan, like: Basic, premimum ...', max_length=50
+        description='The name of plan, like: Basic, premimum ...',
+        max_length=50,
+        examples=['Basic', 'Black', 'Gold']
     )
     descr : str = Field(
-        'A short description of plan', max_length=300
+        description='A short description of plan',
+        max_length=300,
+        examples=['Black plan allow you to use any gym from our network']
     )   
     price : float = Field(
-        'The price of plan', gt=0
+        description='The price of plan',
+        gt=0,
+        examples=[100.00, 200.00, 300.00]
     )
+    
+    model_config = {
+        'json_shemma_extra': {
+            'examples': [
+                {
+                    'plan_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'plan_name': 'Basic',
+                    'descr': 'Basic plan allow you to use our gym',
+                    'price': 100.00
+                },
+                {
+                    'plan_id': '123e4567-e89b-12d3-a456-426614174001',
+                    'plan_name': 'Black',
+                    'descr': 'Black plan allow you to use any gym from our network',
+                    'price': 200.00
+                }
+            ]  
+        }
+    }
     
 class Evaluation(BaseModel):
     evaluation_id: UUID = Field(
-        'The evaluation id, an identifier of evaluation'
+        description='The evaluation id, an identifier of evaluation'
     )
     evaluation_date: datetime = Field(
-        'The date of evaluation', le=datetime.now()
+        description='The date of evaluation',
+        le=datetime.now(),
+        examples=['2021-01-01']
     )
     weight: float = Field(
-        'The weight of member', gt=0
+        description='The weight of member',
+        gt=0,
+        examples=[70.5, 80.0]
     )
     height: float = Field(
-        'The height of member', gt=0
+        description='The height of member',
+        gt=0,
+        examples=[1.70, 1.80]
     )
     fat_percentage: float | None = Field(
-        'The fat percentage of member, can none value', gt=0
+        default=None,
+        description='The fat percentage of member, can none value',
+        gt=0,
+        le=100,
+        examples=[15.0, 20.0]
     )
     observation: str | None = Field(
-        'The observation of evaluation, value can be none', max_length=300
+        default=None,
+        description='The observation of evaluation, value can be none',
+        max_length=300,
+        examples=['Antônio complained of pain in the back, make sure he does the exercises correctly.']
     )
+    
+    model_config = {
+        'json_schema_extra': {
+            'examples': [
+                {
+                    'evaluation_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'evaluation_date': '2021-01-01',
+                    'weight': 70.5,
+                    'height': 1.70,
+                    'fat_percentage': 15.0,
+                    'observation': 'Antônio complained of pain in the back, make sure he does the exercises correctly.'
+                    
+                },
+                {
+                    'evaluation_id': '123e4567-e89b-12d3-a456-426614174001',
+                    'evaluation_date': '2021-02-01',
+                    'weight': 50.0,
+                    'height': 1.53,
+                    'fat_percentage': 20.0,
+                    'observation': 'Leandra wishes to get more strength in the legs, increase the weight of the exercises.'
+                }
+            ]
+        }
+    }
 
 class Member(BaseModel):
-    member_id: UUID
+    member_id: UUID = Field(
+        description='The member id, an identifier of member'
+    )
     name: str = Field(
-        'Full name of the member', max_length=100
+        description='Full name of the member',
+        max_length=100,
+        examples=['Arthur Martins', 'Antônio Carlos de Almeida']
     )
     birth_date: datetime = Field(
-        'The birth date of member', le=datetime.now()
+        description='The birth date of member',
+        le=datetime.now(),
+        examples=['1990-01-01']
     )
     email: str = Field(
-        'The email of member', max_length=100
+        description='The email of member',
+        max_length=100,
+        examples=['arthurmsb@al.insper.edu,br']
     )
     phone: str | None = Field(
-        'The phone of member', max_length=20
+        default=None,
+        description='The phone of member',
+        max_length=20,
+        examples=['+55 11 99999-9999']
+    )
+    cpf : str = Field(
+        description='The CPF of member',
+        max_length=11,
+        examples=['12345678901']
     )
     inscription_date: datetime = Field(
-        'The date of inscription', le=datetime.now()
+        description='The date of inscription',
+        le=datetime.now(),
+        examples=['2021-01-01']
     )
     plan_id: UUID = Field(
-        'The plan id of member'
+        description='The plan id of member'
     )
     evaluations : list[Evaluation] = Field(
-        'The evaluations of member'
+        description='The evaluations of member',
+        examples=[
+            [
+                {
+                    'evaluation_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'evaluation_date': '2021-01-01',
+                    'weight': 70.5,
+                    'height': 1.70,
+                    'fat_percentage': 15.0,
+                    'observation': 'Antônio complained of pain in the back, make sure he does the exercises correctly.'
+                    
+                },
+                {
+                    'evaluation_id': '123e4567-e89b-12d3-a456-426614174001',
+                    'evaluation_date': '2021-02-01',
+                    'weight': 50.0,
+                    'height': 1.53,
+                    'fat_percentage': 20.0,
+                    'observation': 'Leandra wishes to get more strength in the legs, increase the weight of the exercises.'
+                }
+            ]
+        ]
     )
+    
+    model_config = {
+        'json_schema_extra': {
+            'examples': [
+                {
+                    'member_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'name': 'Arthur Martins',
+                    'birth_date': '1990-01-01',
+                    'email': 'arthurmsb@al.insper.edu.br',
+                    'phone': '+55 11 99999-9999',
+                    'cpf': '12345678901',
+                    'inscription_date': '2021-01-01',
+                    'plan_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'evaluations': [
+                        {
+                            'evaluation_id': '123e4567-e89b-12d3-a456-426614174000',
+                            'evaluation_date': '2021-01-01',
+                            'weight': 70.5,
+                            'height': 1.70,
+                            'fat_percentage': 15.0,
+                            'observation': 'Antônio complained of pain in the back, make sure he does the exercises correctly.'
+                            
+                        }
+                    ]
+                }
+            ]
+        }
+    }
