@@ -23,12 +23,12 @@ def get_member(member : Member):
 
 #Atualizar os detalhes de um membro: PUT /members/{id}
 @app.put("/members/{member_id}")
-def update_member():
+def update_member(member_id: int, member_name: str):
     print(f"update member of {member_id}")
 
 #Excluir um membro: DELETE /members/{id}
 @app.delete("/members/{member_id}")
-def delete_member():
+def delete_member(member_id):
     print(f"delete member of {member_id}")
     
 
@@ -57,7 +57,7 @@ def update_plan(plan_id: int, plan_name : str, descr : str):
     print(f"update plan {plan_id}")
 
 #Excluir um plano: DELETE /plans/{id}
-@app.put("/plans/{plan_id}")
+@app.delete("/plans/{plan_id}")
 def update_plan(plan_id: int, plan_name : str, descr : str):
     print(f"update plan {plan_id}")
 
