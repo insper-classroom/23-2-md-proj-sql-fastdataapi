@@ -36,7 +36,7 @@ def get_member(member_id : int):
     return {member_id:dict_members[member_id]}
 
 #Criar um novo membro: POST /members
-@app.post("/member")
+@app.post("/member",status_code=201)
 def create_member(member : Member):
     if member.member_id in dict_members:
         raise HTTPException(status_code=409, detail=f"Member with same id alredy exists")
@@ -101,7 +101,7 @@ def get_plans(plan_id:int):
 
 
 #Criar um novo plano: POST /plans
-@app.post("/plan")
+@app.post("/plan",status_code=201)
 def post_plan(plan: Plan):
     
     if plan.plan_id in dict_planos:
@@ -166,7 +166,7 @@ def query_members_by_specific_plan(plan_id: int) -> list[Member]:
             plan_members.append(dict_members[member])
     return plan_members
 
-#Adicionar um membro a um plano: POST /plans/{plan_id}/members
+#Adicionar um membro a um plano: PUT /plans/{plan_id}/members
 @app.put("/plan/{plan_id}/members/{member_id}") 
 def get_all_members(plan_id: int, member_id:int) -> dict[str,Member]:
     if plan_id not in dict_planos or member_id not in dict_members:
@@ -217,7 +217,7 @@ def get_all_evaluations_from_member(member_id : int, evaluation_n:int) -> dict[s
     return {"evaluation" : dict_members[member_id].evaluations[evaluation_n]}
 
 #Criar uma nova avaliacao : POST /member/{member_id}/evaluation
-@app.post("/member/{member_id}/evaluation")
+@app.post("/member/{member_id}/evaluation",status_code=201)
 def create_workout_evaluation(member_id: int, evaluation:Evaluation) ->dict[str,Evaluation]:
     print("entrou")
     if member_id not in dict_members:
