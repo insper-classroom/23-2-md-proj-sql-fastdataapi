@@ -6,11 +6,19 @@ import datetime
 
 app = FastAPI()
 
-plano_teste = Plan(plan_id = 0, plan_name = "Basic", descr = "Basic plan allow you to use our gym", price= 100)
-dict_planos = {plano_teste.plan_id : plano_teste}
+plano_0 = Plan(plan_id = 0, plan_name = "Basic", descr = "Basic plan allow you to use our gym", price= 100)
+plano_1 = Plan(plan_id = 1, plan_name = "Plus", descr = "Acess to a personal trainer up to two times a week", price= 150)
+dict_planos={
+                plano_0.plan_id : plano_0,
+                plano_1.plan_id : plano_1
+            }
 
-membro_teste = Member(member_id = 1, name = 'Fulano',birth_date = datetime.datetime(1990,1,1),email='arthurmsb@al.insper.edu,br',phone='+55 11 99999-9999',cpf='12345678901',inscription_date=datetime.datetime(2021,1,1),plan_id = 1,evaluations = [])
-dict_members = {membro_teste.member_id : membro_teste}
+membro_0 = Member(member_id = 0, name = 'Fulano',birth_date = datetime.datetime(1990,1,1),email='fulano@al.insper.edu,br',phone='+55 11 99999-9999',cpf='12345678901',inscription_date=datetime.datetime(2021,1,1),plan_id = 0,evaluations = [])
+membro_1 = Member(member_id = 1, name = 'Sincrano',birth_date = datetime.datetime(1970,1,1),email='sincrano@al.insper.edu,br',phone='+55 11 99999-9999',cpf='12345678991',inscription_date=datetime.datetime(2021,1,1),plan_id = 1,evaluations = [])
+dict_members = {
+                    membro_0.member_id : membro_0,
+                    membro_1.member_id : membro_1,
+                }
 
 #Listar todos os membros: GET /members
 @app.get("/members")
@@ -27,7 +35,7 @@ def get_member(member_id : int):
 
 #Criar um novo membro: POST /members
 @app.post("/member")
-def get_member(member : Member):
+def create_member(member : Member):
     if member.member_id in dict_members:
         raise HTTPException(status_code=400, detail=f"Member alredy exists")
 
@@ -36,8 +44,34 @@ def get_member(member : Member):
 
 #Atualizar os detalhes de um membro: PUT /members/{id}
 @app.put("/member/{member_id}")
-def update_member(member_id: int, member_name: str):
-    print(f"update member of {member_id}")
+def update_member(member_id: int,
+                  name: str | None = None,
+                  birth_date : str | None = None,
+                  email : str| None = None,
+                  phone : str | None = None,
+                  cpf : str | None = None,
+                  inscription_date : str | None = None) -> dict[str,Member]:
+
+    if member_id not in dict_members:
+        raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not exist")
+
+    if name == birth_date == email == phone ==cpf == inscription_date == None:
+        raise HTTPException(status_code=400, detail="Bad request: all params are null")
+    
+    if name is not None:
+        dict_members[member_id].name = name
+    if birth_date is not None:
+            dict_members[member_id].birth_date = datetime.datetime.strptime(birth_date, "%Y-%m-%d %H:%M:%S")
+    if email is not None:
+        dict_members[member_id].email = email
+    if phone is not None:
+        dict_members[member_id].phone = phone
+    if cpf is not None:
+        dict_members[member_id].cpf = cpf
+    if inscription_date is not None:
+        dict_members[member_id].inscription_date = datetime.datetime.strptime(inscription_date, "%Y-%m-%d %H:%M:%S")
+
+    return {"updated":dict_members[member_id]}
 
 #Excluir um membro: DELETE /members/{id}
 @app.delete("/member/{member_id}")
@@ -75,21 +109,27 @@ def post_plan(plan: Plan):
     print(dict_planos[plan.plan_id])
     return {"added":plan}
 
-#Atualizar os detalhes de um plano: PUT /plans/{id}
-
-#So consegui mudando para um patch. PROBLEMAS = precisa de todos os itens do plano. Corrigir quando possível
-@app.patch("/plan/{plan_id}", response_model=Plan)
-def update_plan(plan_id: int,plan: Plan) -> dict[str, Plan]:
+#Atualizar os detalhes de um plano: PUT /plans/{id}. O que será atualizado é passado nos parametros
+@app.put("/plan/{plan_id}")
+def update_plan(plan_id: int,
+                plan_name:str | None = None,
+                descr:str | None = None,
+                price:int | None = None) -> dict[str, Plan]:
 
     if plan_id not in dict_planos:
-        raise HTTPException(status_code=400, detail=f"Plan with id {plan_id} does not exist")
+        raise HTTPException(status_code=404, detail=f"Plan with id {plan_id} does not exist")
 
-    plan_data = dict_planos[plan_id]
-    stored_plan_model = plan_data.copy()
-    updated_data = plan.dict(exclude_unset=True)
-    updated_plan = stored_plan_model.copy(update=updated_data)
-    dict_planos[plan_id] = jsonable_encoder(updated_plan)
-    return updated_plan
+    if descr == price == plan_name == None:
+        raise HTTPException(status_code=400, detail="Bad request: all params are null")
+
+    if plan_name is not None:
+        dict_planos[plan_id].plan_name = plan_name
+    if descr is not None:
+        dict_planos[plan_id].descr = descr
+    if price is not None:
+        dict_planos[plan_id].price = price
+
+    return {"updated" : dict_planos[plan_id]}
 
 #Excluir um plano: DELETE /plans/{id}
 @app.delete("/plan/{plan_id}")
@@ -101,18 +141,32 @@ def update_plan(plan_id: int):
 
 
 #Membros de um Plano (Members in a Plan):
-@app.get("/plans/all_members/")
-def query_members_by_plan(plan_name: str):
-    print(f"get all members of plans {plan_name}")
+@app.get("/plans/all_members")
+def query_members_by_plan() -> dict[int,list[Member]]:
+    dic={}
+    for plan in dict_planos:
+        dic[plan] = []
+        for member in dict_members:
+            if dict_members[member].plan_id == plan:
+                dic[plan].append(dict_members[member])
+    return dic
+
+
 
 #Listar todos os membros de um plano específico: GET /plans/{plan_id}/members
 @app.get("/plan/{plan_id}/members")
-def query_members_by_specific_plan(plan_name: str):
-    print(f"get all members of plan {plan_name}")
+def query_members_by_specific_plan(plan_id: int) -> list[Member]:
+    if plan_id not in dict_planos:
+        raise HTTPException(status_code=404, detail=f"Plan with id {plan_id} does not exist")
+    plan_members = []
+    for member in dict_members:
+        if dict_members[member].plan_id == plan_id:
+            plan_members.append(dict_members[member])
+    return plan_members
 
 #Adicionar um membro a um plano: POST /plans/{plan_id}/members
 @app.put("/plan/{plan_id}/members/{member_id}") 
-def get_all_members(plan_id: int, member_id:int):
+def get_all_members(plan_id: int, member_id:int) -> dict[str,Member]:
     if plan_id not in dict_planos or member_id not in dict_members:
         raise HTTPException(status_code=404, detail="One of the given IDs does not exisdkk")
     dict_members[member_id].plan_id = plan_id
@@ -120,7 +174,7 @@ def get_all_members(plan_id: int, member_id:int):
     
 #Remover um membro de um plano: DELETE /plans/{plan_id}/members/{member_id}
 @app.delete("/plan/{plan_id}/members/{member_id}")
-def delete_member(plan_id:int , member_id:int):
+def delete_member(plan_id:int , member_id:int) -> dict[str,str]:
     if plan_id not in dict_planos or member_id not in dict_members:
         raise HTTPException(status_code=404, detail="One of the given IDs does not exisdkk")
     if dict_members[member_id].plan_id != plan_id:
