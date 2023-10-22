@@ -217,16 +217,17 @@ def get_all_evaluations_from_member(member_id : int, evaluation_n:int) -> dict[s
     return {"evaluation" : dict_members[member_id].evaluations[evaluation_n]}
 
 #Criar uma nova avaliacao : POST /member/{member_id}/evaluation
-@app.post("member/{member_id}/evaluation")
+@app.post("/member/{member_id}/evaluation")
 def create_workout_evaluation(member_id: int, evaluation:Evaluation) ->dict[str,Evaluation]:
+    print("entrou")
     if member_id not in dict_members:
         raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not exist")
     
-    if evaluation in dict_evaluations:
+    if evaluation.evaluation_id in dict_evaluations:
         raise HTTPException(status_code=409, detail=f"Evaluation with same id alredy exists")
 
     dict_evaluations[evaluation.evaluation_id] = evaluation
-    dict_members[member.member_id].evaluations.append(evaluation)
+    dict_members[member_id].evaluations.append(evaluation)
 
     return {"added":evaluation}
 
