@@ -20,6 +20,8 @@ dict_members = {
                     membro_1.member_id : membro_1,
                 }
 
+dict_evaluations = {}
+
 #Listar todos os membros: GET /members
 @app.get("/members")
 def get_all_members():
@@ -185,4 +187,61 @@ def delete_member(plan_id:int , member_id:int) -> dict[str,str]:
 
 
 #Evaluations
+
+
+#Pegar todas as avaliações de um membro : GET /member/{member_id}/evaluation
+@app.get("/member/{member_id}/evaluations")
+def get_all_evaluations_from_member(member_id : int) -> list[Evaluation]:
+    if member_id not in dict_members:
+        raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not exist")
+    return dict_members[member_id].evaluations
+
+
+#Pegar uma avaliação pelo id dela
+@app.get("/evaluation/{evaluation_id}")
+def get_all_evaluations_from_member(evaluation_id : int) -> dict[str,Evaluation]:
+    if evaluation_id not in dict_evaluations:
+        raise HTTPException(status_code=404, detail=f"Evaluation with id {evaluation_id} does not exist")
+    return { "evaluation" : dict_evaluations[evaluation_id].evaluations}
+
+
+#Pegar a N'esima avaliacao de um membro : GET /member/{member_id}/evaluation/{evaluation_n}
+@app.get("/member/{member_id}/evaluation/{evaluation_n}")
+def get_all_evaluations_from_member(member_id : int, evaluation_n:int) -> dict[str,Evaluation]:
+    if member_id not in dict_members:
+        raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not exist")
+
+    if n >= len(dict_members[member_id].evaluations):
+        raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not have {evaluation_n} evaluations")
+
+    return {"evaluation" : dict_members[member_id].evaluations[n]}
+
+#Criar uma nova avaliacao : POST /member/{member_id}/evaluation
+@app.post("member/{member_id}/evaluation")
+def create_workout_evaluation(member_id: int, evaluation:Evaluation) ->dict[str,Evaluation]:
+    if member_id not in dict_members:
+        raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not exist")
+    
+    if evaluation in dict_evaluations:
+        raise HTTPException(status_code=400, detail=f"Evaluation with same id alredy exists")
+
+    dict_evaluations[evaluation.evaluation_id] = evaluation
+    dict_members[member.member_id].evaluations.append(evaluation)
+
+    return {"added":evaluation}
+
+@app.delete("/member/{member_id}/evaluation/{evaluation_n}")
+def get_all_evaluations_from_member(member_id : int, evaluation_n:int) -> dict[str,Evaluation]:
+    
+    if member_id not in dict_members:
+        raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not exist")
+        
+    if n >= len(dict_members[member_id].evaluations):
+        raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not have {evaluation_n} evaluations")
+
+    evaluation_id = dict_members[member_id].evaluations[n].evaluation_id
+    dict_members[member_id].evaluations.pop(evaluation_n)
+    del dict_evaluations[evaluation_id]
+
+    return {"deleted" : f"Member {member_id} {evaluation_n}th evaluation"}
 
