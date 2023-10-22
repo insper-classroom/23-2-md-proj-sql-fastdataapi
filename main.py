@@ -1,8 +1,12 @@
-from fastapi import FastAPI, Body, Path, Query
+from fastapi import FastAPI, Body, Path, Query, HTTPException
 from typing import Annotated
 from shemas import Member, Plan, Evaluation
+import json
 
 app = FastAPI()
+
+dict_planos = {}
+dict_membros = {}
 
 #Listar todos os membros: GET /members
 @app.get("/members")
@@ -33,25 +37,33 @@ def delete_member(member_id):
 #Listar todos os planos: GET /plans
 @app.get("/plans")
 def get_plans():
-    print("get all plans")
+    return {plans: dict_planos}
 
 #Obter detalhes de um plano específico: GET /plans/{id}
-@app.get("/plans/{plan_id}")
-def get_plans(plan_id):
+@app.get("/plan/{plan_id}")
+def get_plans(plan_id:int):
     print(f"get plan of id {plan_id}")
 
 #Criar um novo plano: POST /plans
-@app.post("/plans")
+@app.post("/plan")
 def post_plan(plan: Plan):
-    print(f"add plan {plan}")
+    
+    if plan.plan_id in dict_planos:
+        HTTPException(status_code=400, detail=f"Plan alredy exists")
+
+    dict_planos[plan.plan_id] = plan  #.model_dump()
+    #with open("planos.json", "w") as f:
+    #    json.dump(dict_planos, f)
+    print(dict_planos[plan.plan_id])
+    return {"added":plan}
 
 #Atualizar os detalhes de um plano: PUT /plans/{id}
-@app.put("/plans/{plan_id}")
+@app.put("/plan/{plan_id}")
 def update_plan(plan_id: int, plan_name : str, descr : str):
     print(f"update plan {plan_id}")
 
 #Excluir um plano: DELETE /plans/{id}
-@app.delete("/plans/{plan_id}")
+@app.delete("/plan/{plan_id}")
 def update_plan(plan_id: int, plan_name : str, descr : str):
     print(f"update plan {plan_id}")
 
@@ -61,16 +73,18 @@ def query_members_by_plan(plan_name: str):
     print(f"get all members of plans {plan_name}")
 
 #Listar todos os membros de um plano específico: GET /plans/{plan_id}/members
-@app.get("/plans/{plan_id}/members")
+@app.get("/plan/{plan_id}/members")
 def query_members_by_specific_plan(plan_name: str):
     print(f"get all members of plan {plan_name}")
 
 #Adicionar um membro a um plano: POST /plans/{plan_id}/members
-@app.get("/plans/{plan_id}/members/{member_id}") 
+@app.get("/plan/{plan_id}/members/{member_id}") 
 def get_all_members(plan_id: int, member_id:int):
     print(f"add member ")
-
 #Remover um membro de um plano: DELETE /plans/{plan_id}/members/{member_id}
-@app.delete("/plans/{plans_id}/members/{member_id}")
-def delete_member():
+@app.delete("/plan/{plan_id}/members/{member_id}")
+def delete_member(plan_id:int , member_id:int):
     print(f"delete member {member_id} from plan {plan_id}")
+
+
+#Evaluations
