@@ -1,11 +1,10 @@
 from pydantic import BaseModel, Field
 from uuid import UUID
 from datetime import datetime
+from typing import Optional
 
 class Plan(BaseModel):
-    plan_id : UUID = Field(
-        description='The plan id, an identifier of plan'
-    )
+    plan_id : int
     plan_name : str = Field(
         description='The name of plan, like: Basic, premimum ...',
         max_length=50,
@@ -42,9 +41,7 @@ class Plan(BaseModel):
     }
     
 class Evaluation(BaseModel):
-    evaluation_id: UUID = Field(
-        description='The evaluation id, an identifier of evaluation'
-    )
+    evaluation_id: int
     evaluation_date: datetime = Field(
         description='The date of evaluation',
         le=datetime.now(),
@@ -99,9 +96,7 @@ class Evaluation(BaseModel):
     }
 
 class Member(BaseModel):
-    member_id: UUID = Field(
-        description='The member id, an identifier of member'
-    )
+    member_id: int
     name: str = Field(
         description='Full name of the member',
         max_length=100,
@@ -133,9 +128,7 @@ class Member(BaseModel):
         le=datetime.now(),
         examples=['2021-01-01']
     )
-    plan_id: UUID = Field(
-        description='The plan id of member'
-    )
+    plan_id: Optional[int] = None,
     evaluations : list[Evaluation] = Field(
         description='The evaluations of member',
         examples=[
