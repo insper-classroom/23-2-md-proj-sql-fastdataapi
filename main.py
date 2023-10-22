@@ -39,7 +39,7 @@ def get_member(member_id : int):
 @app.post("/member")
 def create_member(member : Member):
     if member.member_id in dict_members:
-        raise HTTPException(status_code=400, detail=f"Member alredy exists")
+        raise HTTPException(status_code=409, detail=f"Member with same id alredy exists")
 
     dict_members[member.member_id] = member
     return {"added":member}
@@ -105,7 +105,7 @@ def get_plans(plan_id:int):
 def post_plan(plan: Plan):
     
     if plan.plan_id in dict_planos:
-        raise HTTPException(status_code=404, detail=f"Plan alredy exists")
+        raise HTTPException(status_code=409, detail=f"Plan alredy exists")
 
     dict_planos[plan.plan_id] = plan
     print(dict_planos[plan.plan_id])
@@ -223,7 +223,7 @@ def create_workout_evaluation(member_id: int, evaluation:Evaluation) ->dict[str,
         raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not exist")
     
     if evaluation in dict_evaluations:
-        raise HTTPException(status_code=400, detail=f"Evaluation with same id alredy exists")
+        raise HTTPException(status_code=409, detail=f"Evaluation with same id alredy exists")
 
     dict_evaluations[evaluation.evaluation_id] = evaluation
     dict_members[member.member_id].evaluations.append(evaluation)
