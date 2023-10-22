@@ -211,10 +211,10 @@ def get_all_evaluations_from_member(member_id : int, evaluation_n:int) -> dict[s
     if member_id not in dict_members:
         raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not exist")
 
-    if n >= len(dict_members[member_id].evaluations):
+    if evaluation_n >= len(dict_members[member_id].evaluations):
         raise HTTPException(status_code=404, detail=f"Member with id {member_id} does not have {evaluation_n} evaluations")
 
-    return {"evaluation" : dict_members[member_id].evaluations[n]}
+    return {"evaluation" : dict_members[member_id].evaluations[evaluation_n]}
 
 #Criar uma nova avaliacao : POST /member/{member_id}/evaluation
 @app.post("member/{member_id}/evaluation")
