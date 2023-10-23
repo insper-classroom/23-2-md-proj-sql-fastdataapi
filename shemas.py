@@ -79,7 +79,7 @@ class Evaluation(BaseModel):
             'examples': [
                 {
                     'evaluation_id': '0',
-                    'evaluation_date': '2021-01-01',
+                    'evaluation_date': '2021-01-01T00:00:00',
                     'weight': 70.5,
                     'height': 1.70,
                     'fat_percentage': 15.0,
@@ -88,7 +88,7 @@ class Evaluation(BaseModel):
                 },
                 {
                     'evaluation_id': '1',
-                    'evaluation_date': '2021-02-01',
+                    'evaluation_date': '2021-02-01T00:00:00',
                     'weight': 50.0,
                     'height': 1.53,
                     'fat_percentage': 20.0,
@@ -137,7 +137,7 @@ class Member(BaseModel):
         examples=[
             [
                 {
-                    'evaluation_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'evaluation_id': '0',
                     'evaluation_date': '2021-01-01',
                     'weight': 70.5,
                     'height': 1.70,
@@ -146,7 +146,7 @@ class Member(BaseModel):
                     
                 },
                 {
-                    'evaluation_id': '123e4567-e89b-12d3-a456-426614174001',
+                    'evaluation_id': '1',
                     'evaluation_date': '2021-02-01',
                     'weight': 50.0,
                     'height': 1.53,
@@ -161,18 +161,18 @@ class Member(BaseModel):
         'json_schema_extra': {
             'examples': [
                 {
-                    'member_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'member_id': '2',
                     'name': 'Arthur Martins',
-                    'birth_date': '1990-01-01',
+                    'birth_date': '1990-01-01T00:00:00',
                     'email': 'arthurmsb@al.insper.edu.br',
                     'phone': '+55 11 99999-9999',
                     'cpf': '12345678901',
-                    'inscription_date': '2021-01-01',
-                    'plan_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'inscription_date': '2021-01-01T00:00:00',
+                    'plan_id': '0',
                     'evaluations': [
                         {
-                            'evaluation_id': '123e4567-e89b-12d3-a456-426614174000',
-                            'evaluation_date': '2021-01-01',
+                            'evaluation_id': '0',
+                            'evaluation_date': '2021-01-01T00:00:00',
                             'weight': 70.5,
                             'height': 1.70,
                             'fat_percentage': 15.0,

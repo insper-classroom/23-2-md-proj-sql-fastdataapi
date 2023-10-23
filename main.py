@@ -70,7 +70,7 @@ def update_member(member_id: Annotated[int, Path(title="Member Id", example = 0)
                   email: Annotated[str | None, Query(title="Email", example="mario@armario.com")] = None,
                   phone: Annotated[str | None, Query(title="Phone number", example="55 11 99999=9999")] = None,
                   cpf: Annotated[str | None, Query(title="CPF", example="12345678911")] = None,
-                  inscription_date: Annotated[str | None, Query(title="Inscription date", example="1970-01-01 00:00:00")] = None):
+                  inscription_date: Annotated[str | None, Query(title="Inscription date", example="1970-01-01 00:00:00")] = None) -> dict[str,Member]:
 
     if member_id not in dict_members:
         raise HTTPException(
