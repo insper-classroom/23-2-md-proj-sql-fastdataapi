@@ -4,7 +4,10 @@ from datetime import datetime
 from typing import Optional
 
 class Plan(BaseModel):
-    plan_id : int
+    plan_id : int= Field(
+        example=0
+    )
+
     plan_name : str = Field(
         description='The name of plan, like: Basic, premimum ...',
         max_length=50,
@@ -25,13 +28,13 @@ class Plan(BaseModel):
         'json_shemma_extra': {
             'examples': [
                 {
-                    'plan_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'plan_id': '0',
                     'plan_name': 'Basic',
                     'descr': 'Basic plan allow you to use our gym',
                     'price': 100.00
                 },
                 {
-                    'plan_id': '123e4567-e89b-12d3-a456-426614174001',
+                    'plan_id': '1',
                     'plan_name': 'Black',
                     'descr': 'Black plan allow you to use any gym from our network',
                     'price': 200.00
@@ -41,7 +44,7 @@ class Plan(BaseModel):
     }
     
 class Evaluation(BaseModel):
-    evaluation_id: int
+    evaluation_id: int 
     evaluation_date: datetime = Field(
         description='The date of evaluation',
         le=datetime.now(),
@@ -75,7 +78,7 @@ class Evaluation(BaseModel):
         'json_schema_extra': {
             'examples': [
                 {
-                    'evaluation_id': '123e4567-e89b-12d3-a456-426614174000',
+                    'evaluation_id': '0',
                     'evaluation_date': '2021-01-01',
                     'weight': 70.5,
                     'height': 1.70,
@@ -84,7 +87,7 @@ class Evaluation(BaseModel):
                     
                 },
                 {
-                    'evaluation_id': '123e4567-e89b-12d3-a456-426614174001',
+                    'evaluation_id': '1',
                     'evaluation_date': '2021-02-01',
                     'weight': 50.0,
                     'height': 1.53,

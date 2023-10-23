@@ -42,8 +42,8 @@ def get_all_members():
 
 @app.get("/member/{member_id}")
 def get_member(
-    member_id: Annotated[int, Path(title='Member id', description='Get an specific member by id')]
-):
+    member_id: Annotated[int, Path(title='Member id', description='Get an specific member by id', example=0)]
+) -> dict:
     if member_id not in dict_members:
         raise HTTPException(
             status_code=404, detail=f"Member with id {member_id} does not exist")
@@ -63,14 +63,14 @@ def create_member(member: Member):
 
 # Atualizar os detalhes de um membro: PUT /members/{id}
 
-@app.put("/member/{member_id}", description="Update member details by identifying it by id")
-def update_member(member_id: int,
-                  name: str | None = None,
-                  birth_date: str | None = None,
-                  email: str | None = None,
-                  phone: str | None = None,
-                  cpf: str | None = None,
-                  inscription_date: str | None = None) -> dict[str, Member]:
+@app.put("/member/{member_id}", description="Update member details by identifying it by id", status_code=200)
+def update_member(member_id: Annotated[int, Path(title="Member Id", example = 0)],
+                  name: Annotated[str | None, Query(title="Name", example="Mario")] = None,
+                  birth_date: Annotated[str | None, Query(title="Date of birth", example="1970-01-01 00:00:00")] = None,
+                  email: Annotated[str | None, Query(title="Email", example="mario@armario.com")] = None,
+                  phone: Annotated[str | None, Query(title="Phone number", example="55 11 99999=9999")] = None,
+                  cpf: Annotated[str | None, Query(title="CPF", example="12345678911")] = None,
+                  inscription_date: Annotated[str | None, Query(title="Inscription date", example="1970-01-01 00:00:00")] = None):
 
     if member_id not in dict_members:
         raise HTTPException(
@@ -102,7 +102,7 @@ def update_member(member_id: int,
 @app.delete("/member/{member_id}",status_code=204)
 def delete_member(
     member_id: Annotated[int, Path(title='Member id', description='Delete an specific member by id')]
-):
+) -> None:
     if member_id not in dict_members:
         raise HTTPException(
             status_code=404, detail=f"Member with id {member_id} does not exist")
@@ -114,14 +114,14 @@ def delete_member(
 # Listar todos os planos: GET /plans
 
 @app.get("/plans", description="List all plans")
-def get_plans():
-    return {"plans": dict_planos}
+def get_plans() -> list[Plan]:
+    return list(dict_planos.values())
 
 # Obter detalhes de um plano específico: GET /plans/{id}
 
 @app.get("/plan/{plan_id}")
 def get_plans(
-    plan_id: Annotated[int, Path(title='Plan id', description='Get an specific plan by id')]
+    plan_id: Annotated[int, Path(title='Plan id', description='Get an specific plan by id', example = 0)]
 ):
 
     if plan_id not in dict_planos:
@@ -144,10 +144,10 @@ def post_plan(plan: Plan):
 # Atualizar os detalhes de um plano: PUT /plans/{id}. O que será atualizado é passado nos parametros
 
 @app.put("/plan/{plan_id}", description="Update plan details by identifying it by id")
-def update_plan(plan_id: int,
-                plan_name: str | None = None,
-                descr: str | None = None,
-                price: int | None = None) -> dict[str, Plan]:
+def update_plan(plan_id: Annotated[int, Path(title="Plan id", example=0)],
+                plan_name: Annotated[str | None, Query(title="Plan name", example="Black")] = None,
+                descr: Annotated[str | None, Query(title="Plan description", example="Premium plan that allows members to use all facilities")] = None,
+                price: Annotated[int | None, Query(title="Price", example=200)] = None) -> dict[str, Plan]:
 
     if plan_id not in dict_planos:
         raise HTTPException(
@@ -191,7 +191,8 @@ def query_members_by_plan() -> dict[int, list[Member]]:
 
 # Listar todos os membros de um plano específico: GET /plans/{plan_id}/members
 @app.get("/plan/{plan_id}/members", description="List all members in a specific plan")
-def query_members_by_specific_plan(plan_id: int) -> list[Member]:
+def query_members_by_specific_plan(
+        plan_id: Annotated[int, Path(title="Plan id", description="Id of the plan you want to get the members of",example=0)]) -> list[Member]:
     if plan_id not in dict_planos:
         raise HTTPException(
             status_code=404, detail=f"Plan with id {plan_id} does not exist")
@@ -204,7 +205,9 @@ def query_members_by_specific_plan(plan_id: int) -> list[Member]:
 # Adicionar um membro a um plano: PUT /plans/{plan_id}/members
 
 @app.put("/plan/{plan_id}/members/{member_id}", description="Add a member to a plan")
-def get_all_members(plan_id: int, member_id: int) -> dict[str, Member]:
+def add_member_to_plan(
+        plan_id: Annotated[int, Path(title="Plan id", description="Id of the plan you want to add to",example=0)],
+        member_id: Annotated[int, Path(title="Plan id", description="Id of the member you want to add",example=0)]) -> dict[str,Member]:
     if plan_id not in dict_planos or member_id not in dict_members:
         raise HTTPException(
             status_code=404, detail="One of the given IDs does not exisdkk")
@@ -214,7 +217,10 @@ def get_all_members(plan_id: int, member_id: int) -> dict[str, Member]:
 # Remover um membro de um plano: DELETE /plans/{plan_id}/members/{member_id}
 
 @app.delete("/plan/{plan_id}/members/{member_id}", description="Remove a member from a plan", status_code=204)
-def delete_member(plan_id: int, member_id: int) -> None:
+def delete_member(
+        plan_id: Annotated[int, Path(title="Plan id", description="Id of the plan you want to delete from",example=0)],
+        member_id: Annotated[int, Path(title="Member id", description="Id of the member you want to delete",example=0)]
+    ) -> None:
     if plan_id not in dict_planos or member_id not in dict_members:
         raise HTTPException(
             status_code=404, detail="One of the given IDs does not exisdkk")
@@ -228,7 +234,9 @@ def delete_member(plan_id: int, member_id: int) -> None:
 
 # Pegar todas as avaliações de um membro : GET /member/{member_id}/evaluation
 @app.get("/member/{member_id}/evaluations", description="List all evaluations from a member")
-def get_all_evaluations_from_member(member_id: int) -> list[Evaluation]:
+def get_all_evaluations_from_member(
+        member_id: Annotated[int, Path(title="Member id", description="Id of the member you want to get the evaluations from",example=0)]
+    ) -> list[Evaluation]:
     if member_id not in dict_members:
         raise HTTPException(
             status_code=404, detail=f"Member with id {member_id} does not exist")
@@ -236,15 +244,19 @@ def get_all_evaluations_from_member(member_id: int) -> list[Evaluation]:
 
 # Pegar uma avaliação pelo id dela
 @app.get("/evaluation/{evaluation_id}", description="Get an evaluation by its id")
-def get_all_evaluations_from_member(evaluation_id: int) -> dict[str, Evaluation]:
+def get_evaluation_by_id(
+        evaluation_id: Annotated[int, Path(title="Evaluation id", description="Id of the evaluation you want to get",example=0)]
+    ) -> dict[str, Evaluation]:
     if evaluation_id not in dict_evaluations:
         raise HTTPException(
             status_code=404, detail=f"Evaluation with id {evaluation_id} does not exist")
-    return {"evaluation": dict_evaluations[evaluation_id].evaluations}
+    return {"evaluation": dict_evaluations[evaluation_id]}
 
 # Pegar a N'esima avaliacao de um membro : GET /member/{member_id}/evaluation/{evaluation_n}
 @app.get("/member/{member_id}/evaluation/{evaluation_n}", description="Get the n'th evaluation from a member")
-def get_all_evaluations_from_member(member_id: int, evaluation_n: int) -> dict[str, Evaluation]:
+def get_all_evaluations_from_member(
+        member_id: Annotated[int, Path(title="Member id", description="Id of the member you want the evaluations from")], 
+        evaluation_n: Annotated[int ,Path(title="Evaluation Number", description="Number of the evaluation you want to get")]) -> dict[str, Evaluation]:
     if member_id not in dict_members:
         raise HTTPException(
             status_code=404, detail=f"Member with id {member_id} does not exist")
@@ -258,8 +270,9 @@ def get_all_evaluations_from_member(member_id: int, evaluation_n: int) -> dict[s
 # Criar uma nova avaliacao : POST /member/{member_id}/evaluation
 
 @app.post("/member/{member_id}/evaluation", status_code=201, description="Create a new evaluation")
-def create_workout_evaluation(member_id: int, evaluation: Evaluation) -> dict[str, Evaluation]:
-    print("entrou")
+def create_workout_evaluation(
+        member_id: Annotated[int, Path(title="Member id", description="Id of the member you want add the evaluations to")], 
+        evaluation: Evaluation) -> dict[str, Evaluation]:
     if member_id not in dict_members:
         raise HTTPException(
             status_code=404, detail=f"Member with id {member_id} does not exist")
@@ -274,7 +287,10 @@ def create_workout_evaluation(member_id: int, evaluation: Evaluation) -> dict[st
     return {"added": evaluation}
 
 @app.delete("/member/{member_id}/evaluation/{evaluation_n}", description="Delete the n'th evaluation from a member", status_code=204)
-def get_all_evaluations_from_member(member_id: int, evaluation_n: int):
+def get_all_evaluations_from_member(
+        member_id: Annotated[int, Path(title="Member id", description="Id of the member you want to remove the evaluation from")], 
+        evaluation_n: Annotated[int ,Path(title="Evaluation Number", description="Number of the evaluation you want to remove")]
+    ) -> None:
 
     if member_id not in dict_members:
         raise HTTPException(
