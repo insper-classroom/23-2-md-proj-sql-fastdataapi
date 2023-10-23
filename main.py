@@ -26,6 +26,12 @@ dict_members = {
 
 dict_evaluations = {}
 
+# / com mensagem de boas vindas
+
+@app.get("/")
+def root():
+    return {"message": "Welcome to the gym!"}
+
 # Listar todos os membros: GET /members
 
 @app.get("/members")
