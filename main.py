@@ -273,19 +273,19 @@ def create_workout_evaluation(member_id: int, evaluation: Evaluation) -> dict[st
 
     return {"added": evaluation}
 
-@app.delete("/member/{member_id}/evaluation/{evaluation_n}", description="Delete the n'th evaluation from a member")
-def get_all_evaluations_from_member(member_id: int, evaluation_n: int) -> dict[str, Evaluation]:
+@app.delete("/member/{member_id}/evaluation/{evaluation_n}", description="Delete the n'th evaluation from a member", status_code=204)
+def get_all_evaluations_from_member(member_id: int, evaluation_n: int):
 
     if member_id not in dict_members:
         raise HTTPException(
             status_code=404, detail=f"Member with id {member_id} does not exist")
 
-    if n >= len(dict_members[member_id].evaluations):
+    if evaluation_n >= len(dict_members[member_id].evaluations):
         raise HTTPException(
             status_code=404, detail=f"Member with id {member_id} does not have {evaluation_n} evaluations")
 
-    evaluation_id = dict_members[member_id].evaluations[n].evaluation_id
+    evaluation_id = dict_members[member_id].evaluations[evaluation_n].evaluation_id
     dict_members[member_id].evaluations.pop(evaluation_n)
     del dict_evaluations[evaluation_id]
 
-    return {"deleted": f"Member {member_id} {evaluation_n}th evaluation"}
+    return
