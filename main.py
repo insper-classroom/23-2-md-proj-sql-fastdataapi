@@ -36,7 +36,7 @@ def root():
 
 @app.get("/members", response_model=list[Member], description="List all members")
 def get_all_members():
-    return {"members": dict_members}
+    return list(dict_members.values())
 
 # Obter detalhes de um membro específico: GET /members/{id}
 
@@ -99,7 +99,7 @@ def update_member(member_id: int,
 
 # Excluir um membro: DELETE /members/{id}
 
-@app.delete("/member/{member_id}")
+@app.delete("/member/{member_id}",status_code=204)
 def delete_member(
     member_id: Annotated[int, Path(title='Member id', description='Delete an specific member by id')]
 ):
@@ -108,7 +108,7 @@ def delete_member(
             status_code=404, detail=f"Member with id {member_id} does not exist")
 
     del dict_members[member_id]
-    return {"deleted": member_id}
+    return
 
 # Planos (Plans):
 # Listar todos os planos: GET /plans
@@ -168,13 +168,13 @@ def update_plan(plan_id: int,
 
 # Excluir um plano: DELETE /plans/{id}
 
-@app.delete("/plan/{plan_id}")
+@app.delete("/plan/{plan_id}",status_code=204)
 def update_plan(
     plan_id: Annotated[int, Path(title='Plan id', description='Delete an specific plan by id')]
 ):
     if plan_id in dict_planos:
         del dict_planos[plan_id]
-        return {"deleted": plan_id}
+        return
     raise HTTPException(
         status_code=404, detail=f"Plan with id {plan_id} does not exist")
 
@@ -213,8 +213,8 @@ def get_all_members(plan_id: int, member_id: int) -> dict[str, Member]:
 
 # Remover um membro de um plano: DELETE /plans/{plan_id}/members/{member_id}
 
-@app.delete("/plan/{plan_id}/members/{member_id}", description="Remove a member from a plan")
-def delete_member(plan_id: int, member_id: int) -> dict[str, str]:
+@app.delete("/plan/{plan_id}/members/{member_id}", description="Remove a member from a plan", status_code=204)
+def delete_member(plan_id: int, member_id: int) -> None:
     if plan_id not in dict_planos or member_id not in dict_members:
         raise HTTPException(
             status_code=404, detail="One of the given IDs does not exisdkk")
@@ -222,7 +222,7 @@ def delete_member(plan_id: int, member_id: int) -> dict[str, str]:
         raise HTTPException(
             status_code=400, detail=f"Member {member_id} does not have the plan {dict_planos[plan_id].plan_name}")
     dict_members[member_id].plan_id = None
-    return {"deleted": f"plan {dict_planos[plan_id].plan_name} from member {member_id}"}
+    return
 
 # Evaluations
 
