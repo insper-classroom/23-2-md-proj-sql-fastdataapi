@@ -2,9 +2,10 @@ from pydantic import BaseModel, Field
 from uuid import UUID
 from datetime import datetime
 from typing import Optional
+from sqlalchemy.orm import DeclarativeBase
 
 class Plan(BaseModel):
-    plan_id : int= Field(
+    plan_id : Mapped[int]= Field(
         example=0
     )
 
@@ -42,6 +43,8 @@ class Plan(BaseModel):
             ]  
         }
     }
+    class Config():
+        orm_mode = True
     
 class Evaluation(BaseModel):
     evaluation_id: int 
@@ -97,8 +100,10 @@ class Evaluation(BaseModel):
             ]
         }
     }
+    class Config():
+        orm_mode = True
 
-class Member(BaseModel):
+class MemberCreate(BaseModel):
     member_id: int
     name: str = Field(
         description='Full name of the member',
@@ -132,31 +137,9 @@ class Member(BaseModel):
         examples=['2021-01-01']
     )
     plan_id: Optional[int] = None,
-    evaluations : list[Evaluation] = Field(
-        description='The evaluations of member',
-        examples=[
-            [
-                {
-                    'evaluation_id': '0',
-                    'evaluation_date': '2021-01-01',
-                    'weight': 70.5,
-                    'height': 1.70,
-                    'fat_percentage': 15.0,
-                    'observation': 'Antônio complained of pain in the back, make sure he does the exercises correctly.'
-                    
-                },
-                {
-                    'evaluation_id': '1',
-                    'evaluation_date': '2021-02-01',
-                    'weight': 50.0,
-                    'height': 1.53,
-                    'fat_percentage': 20.0,
-                    'observation': 'Leandra wishes to get more strength in the legs, increase the weight of the exercises.'
-                }
-            ]
-        ]
-    )
-    
+
+class Member(MemberCreate):
+   
     model_config = {
         'json_schema_extra': {
             'examples': [
@@ -169,18 +152,9 @@ class Member(BaseModel):
                     'cpf': '12345678901',
                     'inscription_date': '2021-01-01T00:00:00',
                     'plan_id': '0',
-                    'evaluations': [
-                        {
-                            'evaluation_id': '0',
-                            'evaluation_date': '2021-01-01T00:00:00',
-                            'weight': 70.5,
-                            'height': 1.70,
-                            'fat_percentage': 15.0,
-                            'observation': 'Antônio complained of pain in the back, make sure he does the exercises correctly.'
-                            
-                        }
-                    ]
                 }
             ]
         }
     }
+    class Config():
+        orm_mode = True
