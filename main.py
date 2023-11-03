@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Body, Path, Query, HTTPException
 from fastapi.encoders import jsonable_encoder
 from typing import Annotated
-from shemas import Member, Plan, Evaluation
+from schemas import Member, Plan, Evaluation
 import datetime
 
 app = FastAPI()

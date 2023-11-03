@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy.orm import DeclarativeBase
 
 class Plan(BaseModel):
-    plan_id : Mapped[int]= Field(
+    plan_id : int= Field(
         example=0
     )
 
@@ -26,6 +26,7 @@ class Plan(BaseModel):
     )
     
     model_config = {
+        'orm_mode': 'True',
         'json_shemma_extra': {
             'examples': [
                 {
@@ -43,8 +44,6 @@ class Plan(BaseModel):
             ]  
         }
     }
-    class Config():
-        orm_mode = True
     
 class Evaluation(BaseModel):
     evaluation_id: int 
@@ -78,6 +77,7 @@ class Evaluation(BaseModel):
     )
     
     model_config = {
+        'orm_mode': 'True',
         'json_schema_extra': {
             'examples': [
                 {
@@ -100,8 +100,6 @@ class Evaluation(BaseModel):
             ]
         }
     }
-    class Config():
-        orm_mode = True
 
 class MemberCreate(BaseModel):
     member_id: int
@@ -141,6 +139,7 @@ class MemberCreate(BaseModel):
 class Member(MemberCreate):
    
     model_config = {
+        'orm_mode': 'True',
         'json_schema_extra': {
             'examples': [
                 {
@@ -156,5 +155,3 @@ class Member(MemberCreate):
             ]
         }
     }
-    class Config():
-        orm_mode = True

@@ -2,7 +2,7 @@ from sqlalchemy.orm import session
 
 from . import models, schemas
 
-def db_get_members(db : Session, Id:int | None = None):
+def db_get_members(db : Session, id:int | None = None):
     if id is not None:
         return db.query(models.Member).filter(models.Member.member_id == id).first()
     return db.query(models.Member).all()
@@ -21,7 +21,8 @@ def db_create_member(db: Session, member: schemas.MemberCreate):
     db.refresh(db_user)
     return db_user
 
-def db_update_member(member_id: int,
+def db_update_member(db : Session,
+                     member_id: int,
                      name:str | None = None,
                      birth_date:str | None = None,
                      email: str | None = None, 
@@ -47,6 +48,41 @@ def db_update_member(member_id: int,
     db.commit()
     return member
 
-def db_delete_members(db : Session, Id:int | None = None):
+def db_delete_members(db : Session, id:int):
     db.query(models.Member).filter(models.Member.member_id == id).delete()
+    db.commit()
+
+def db_get_plan(db: Session, id: int | None=None):
+    if id is not None:
+        return db.query(models.Plan).filter(models.Member.member_id == id).first()
+    return db.query(models.Member).all()
+
+def db_post_plan(db: Session, plan: schemas.plan):
+    db_plan = models.Member(plan_id=plan.plan_id,
+                            plan_name = plan.plan_name,
+                            descr = plan.descr,
+                            price = plan.price)
+    db.add(db_plan)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+def db_update_plan(db: Session,
+                   plan_id: int,
+                   plan_name: str | None=None,
+                   descr: str | None=None,
+                   price: float | None=None):
+    plan = db.query(models.plan).filter(models.Member.member_id == id).first()
+    if plan_name is not None:
+        plan.plan_name = plan_name
+    if descr is not None:
+        plan.descr = descr
+    if phone is not None:
+        plan.price = price
+    db.add(plan)
+    db.commit()
+    db.refresh(db_user)
+
+def db_remove_plan(db: Session, id:int):
+    db.query(models.Plan).filter(models.Plan.member_id == id).delete()
     db.commit()
