@@ -72,7 +72,7 @@ def db_update_plan(db: Session,
                    plan_name: str | None=None,
                    descr: str | None=None,
                    price: float | None=None):
-    plan = db.query(models.plan).filter(models.Member.member_id == plan_id).first()
+    plan = db.query(models.plan).filter(models.Plan.member_id == plan_id).first()
     if plan_name is not None:
         plan.plan_name = plan_name
     if descr is not None:
@@ -80,9 +80,8 @@ def db_update_plan(db: Session,
     if plan_name is not None:
         plan.price = price
 
-    db.add(plan)
     db.commit()
-    db.refresh(db_user)
+    return member
 
 def db_remove_plan(db: Session, id:int):
     db.query(models.Plan).filter(models.Plan.member_id == id).delete()
