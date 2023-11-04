@@ -81,7 +81,7 @@ def db_update_plan(db: Session,
         plan.price = price
 
     db.commit()
-    return member
+    return plan
 
 def db_remove_plan(db: Session, id:int):
     db.query(models.Plan).filter(models.Plan.member_id == id).delete()
