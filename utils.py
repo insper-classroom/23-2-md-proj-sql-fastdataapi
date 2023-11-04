@@ -86,3 +86,26 @@ def db_update_plan(db: Session,
 def db_remove_plan(db: Session, id:int):
     db.query(models.Plan).filter(models.Plan.member_id == id).delete()
     db.commit()
+
+def db_get_evaluation(db: Session, id: int):
+    if id is not None:
+        return db.query(models.Evaluation).filter(models.Evaluation.evaluation_id == id).first()
+    return db.query(models.Evaluation).all()
+
+def db_get_evaluation(db: Session, id: int):
+    if id is not None:
+        return db.query(models.Evaluation).filter(models.Evaluation.evaluation_owner_id == id).all()
+    return db.query(models.Member).all()
+
+def db_create_workout_evaluation(db: Session, evaluation : Evaluation):
+    db_eval = models.Evaluation(evaluation_id = evaluation.evaluation_id,
+                              evaluation_owner_id = evaluation.evaluation_owner_id,
+                              evaluation_date = evaluation.evaluation_date,
+                              weight = evaluation.weight,
+                              height = evaluation.height,
+                              fat_percentage = evaluation.fat_percentage,
+                              observation = evaluation.observation)
+    db.add(db_eval)
+    db.commit()
+    db.refresh(db_eval)
+    return db_eval
