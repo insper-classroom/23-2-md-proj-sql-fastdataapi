@@ -27,10 +27,8 @@ class Plan(PlanBase):
     plan_id: int = Field(description="The id of plan", examples=["0", "1", "2"])
     plan_owner_id: int = Field(description="The id of member", examples=["0", "1"])
 
-    class Config:
-        orm_mode = True
-
     model_config = {
+        "orm_mode": "True",
         "json_shemma_extra": {
             "examples": [
                 {
@@ -87,10 +85,9 @@ class Evaluation(EvaluationBase):
         description="The id of member", examples=["0", "1"]
     )
 
-    class Config:
-        orm_mode = True
 
     model_config = {
+        "orm_mode": "True",
         "json_schema_extra": {
             "examples": [
                 {
@@ -178,10 +175,8 @@ class Member(MemberBase):
         ],
     )
 
-    class Config:
-        orm_mode = True
-
     model_config = {
+        "orm_mode": "True",
         "json_schema_extra": {
             "examples": [
                 {

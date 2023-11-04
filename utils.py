@@ -1,6 +1,6 @@
-from sqlalchemy.orm import session
+from sqlalchemy.orm import Session
 import datetime
-from . import models, schemas
+import models, schemas
 
 def db_get_members(db : Session, id:int | None = None):
     if id is not None:
@@ -57,7 +57,7 @@ def db_get_plan(db: Session, id: int | None=None):
         return db.query(models.Plan).filter(models.Member.member_id == id).first()
     return db.query(models.Member).all()
 
-def db_post_plan(db: Session, plan: schemas.plan):
+def db_post_plan(db: Session, plan: schemas.Plan):
     db_plan = models.Member(plan_id=plan.plan_id,
                             plan_name = plan.plan_name,
                             descr = plan.descr,
@@ -97,7 +97,7 @@ def db_get_evaluation(db: Session, id: int):
         return db.query(models.Evaluation).filter(models.Evaluation.evaluation_owner_id == id).all()
     return db.query(models.Member).all()
 
-def db_create_workout_evaluation(db: Session, evaluation : Evaluation):
+def db_create_workout_evaluation(db: Session, evaluation : schemas.Evaluation):
     db_eval = models.Evaluation(evaluation_id = evaluation.evaluation_id,
                               evaluation_owner_id = evaluation.evaluation_owner_id,
                               evaluation_date = evaluation.evaluation_date,
