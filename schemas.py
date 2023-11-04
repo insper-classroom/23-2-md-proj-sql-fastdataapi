@@ -44,7 +44,7 @@ class Plan(PlanBase):
                     "price": 200.00,
                 },
             ]
-        }
+        },
     }
 
 
@@ -85,7 +85,6 @@ class Evaluation(EvaluationBase):
         description="The id of member", examples=["0", "1"]
     )
 
-
     model_config = {
         "orm_mode": "True",
         "json_schema_extra": {
@@ -107,7 +106,7 @@ class Evaluation(EvaluationBase):
                     "observation": "Leandra wishes to get more strength in the legs, increase the weight of the exercises.",
                 },
             ]
-        }
+        },
     }
 
 
@@ -137,6 +136,12 @@ class MemberBase(BaseModel):
         description="The CPF of member", max_length=11, examples=["12345678901"]
     )
 
+    inscription_date: datetime = Field(
+        description="The date of inscription",
+        le=datetime.now(),
+        examples=["2021-01-01"],
+    )
+
 
 class MemberCreate(MemberBase):
     pass
@@ -144,12 +149,6 @@ class MemberCreate(MemberBase):
 
 class Member(MemberBase):
     member_id: int = Field(description="The id of member", examples=["0", "1"])
-
-    inscription_date: datetime = Field(
-        description="The date of inscription",
-        le=datetime.now(),
-        examples=["2021-01-01"],
-    )
     plan_id: Optional[int] = (None,)
     evaluations: list[Evaluation] = Field(
         description="The evaluations of member",
@@ -200,5 +199,5 @@ class Member(MemberBase):
                     ],
                 }
             ]
-        }
+        },
     }
