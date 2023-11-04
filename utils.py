@@ -18,8 +18,8 @@ def db_create_member(db: Session, member: schemas.MemberCreate):
                               plan_id = member.plan_id)
     db.add(db_member)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_member)
+    return db_member
 
 def db_update_member(db : Session,
                      member_id: int,
@@ -64,21 +64,22 @@ def db_post_plan(db: Session, plan: schemas.Plan):
                             price = plan.price)
     db.add(db_plan)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_plan)
+    return db_plan
 
 def db_update_plan(db: Session,
                    plan_id: int,
                    plan_name: str | None=None,
                    descr: str | None=None,
                    price: float | None=None):
-    plan = db.query(models.plan).filter(models.Member.member_id == id).first()
+    plan = db.query(models.plan).filter(models.Member.member_id == plan_id).first()
     if plan_name is not None:
         plan.plan_name = plan_name
     if descr is not None:
         plan.descr = descr
-    if phone is not None:
+    if plan_name is not None:
         plan.price = price
+
     db.add(plan)
     db.commit()
     db.refresh(db_user)
