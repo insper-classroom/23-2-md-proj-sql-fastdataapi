@@ -13,6 +13,7 @@ class Plan(Base):
     plan_name = Column(String, unique=True, index=True, nullable=False)
     descr = Column(String, index=True, nullable=False)
     price = Column(Float, index=True, nullable=False)
+    plan_owner_id = Column(Integer, ForeignKey("members.member_id"))
 
     plan_owner = relationship("Member", back_populates="plans")
 
@@ -27,6 +28,7 @@ class Evaluation(Base):
     fat_percentage = Column(Float, index=True, nullable=True)
     observation = Column(String, index=True, nullable=True)
     member_id = Column(Integer, ForeignKey("members.member_id"))
+    evaluation_owner_id = Column(Integer, ForeignKey("members.member_id"))
 
     evaluation_owner = relationship("Member", back_populates="evaluations")
 
