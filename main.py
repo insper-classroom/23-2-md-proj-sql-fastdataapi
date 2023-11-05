@@ -49,17 +49,21 @@ def get_member(member_id: int, db: Session = Depends(get_db)):
     "/member/",
     status_code=201,
     description="Create a new member",
-    response_model=schemas.Member,
+    response_model=schemas.MemberCreate,
 )
 def create_member(member: schemas.MemberCreate, db: Session = Depends(get_db)):
-    pseudo_member_id = utils.db_get_members(db, id=member.member_id)
+    # pseudo_member_id = utils.db_get_members(db, id=member.member_id)
+    
+    # print(f'pseudo_member_id: {pseudo_member_id}')
 
-    if pseudo_member_id is not None:
-        raise HTTPException(
-            status_code=409, detail=f"Member with id {member.member_id} already exists"
-        )
+    # if pseudo_member_id is not None:
+    #     raise HTTPException(
+    #         status_code=409, detail=f"Member with id {member.member_id} already exists"
+    #     )
 
     db_member = utils.db_create_member(db, member)
+    
+    print(f'db_member: {db_member}')
 
     return db_member
 
