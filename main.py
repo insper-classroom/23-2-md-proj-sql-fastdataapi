@@ -45,22 +45,28 @@ def get_member(member_id: int, db: Session = Depends(get_db)):
 
 
 # Criar um novo membro: POST /members
-@app.post("/member/", status_code=201, description="Create a new member", response_model=schemas.Member)
+@app.post(
+    "/member/",
+    status_code=201,
+    description="Create a new member",
+    response_model=schemas.Member,
+)
 def create_member(member: schemas.MemberCreate, db: Session = Depends(get_db)):
-    
     pseudo_member_id = utils.db_get_members(db, id=member.member_id)
-    
+
     if pseudo_member_id is not None:
-        raise HTTPException(status_code=409, detail=f"Member with id {member.member_id} already exists")
-    
+        raise HTTPException(
+            status_code=409, detail=f"Member with id {member.member_id} already exists"
+        )
+
     db_member = utils.db_create_member(db, member)
-    
+
     return db_member
 
 
 # Atualizar os detalhes de um membro: PUT /members/{id}
 
-'''
+"""
 @app.put(
     "/member/{member_id}",
     description="Update member details by identifying it by id",
@@ -467,4 +473,4 @@ def get_all_evaluations_from_member(
 
     return
     
-'''
+"""

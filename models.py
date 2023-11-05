@@ -10,8 +10,8 @@ class Plan(Base):
     plan_id = Column(
         Integer, primary_key=True, index=True, autoincrement=True, unique=True
     )
-    plan_name = Column(String, unique=True, index=True, nullable=False)
-    descr = Column(String, index=True, nullable=False)
+    plan_name = Column(String(100), unique=True, index=True, nullable=False)
+    descr = Column(String(500), index=True, nullable=False)
     price = Column(Float, index=True, nullable=False)
     plan_owner_id = Column(Integer, ForeignKey("members.member_id"))
 
@@ -26,7 +26,7 @@ class Evaluation(Base):
     weight = Column(Float, index=True, nullable=False)
     height = Column(Float, index=True, nullable=False)
     fat_percentage = Column(Float, index=True, nullable=True)
-    observation = Column(String, index=True, nullable=True)
+    observation = Column(String(500), index=True, nullable=True)
     member_id = Column(Integer, ForeignKey("members.member_id"))
     evaluation_owner_id = Column(Integer, ForeignKey("members.member_id"))
 
@@ -39,11 +39,11 @@ class Member(Base):
     member_id = Column(
         Integer, primary_key=True, index=True, autoincrement=True, unique=True
     )
-    name = Column(String, index=True, nullable=False)
+    name = Column(String(100), index=True, nullable=False)
     birth_date = Column(DateTime, index=True, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
-    phone = Column(String, unique=True, index=True, nullable=True)
-    cpf = Column(String, unique=True, index=True, nullable=False)
+    email = Column(String(100), unique=True, index=True, nullable=False)
+    phone = Column(String(50), unique=True, index=True, nullable=True)
+    cpf = Column(String(50), unique=True, index=True, nullable=False)
     incription_date = Column(DateTime, index=True, nullable=False)
     plan_id = Column(Integer, ForeignKey("plans.plan_id"))
 

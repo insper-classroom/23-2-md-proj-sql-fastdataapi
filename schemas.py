@@ -28,7 +28,7 @@ class Plan(PlanBase):
     plan_owner_id: int = Field(description="The id of member", examples=["0", "1"])
 
     model_config = {
-        "orm_mode": "True",
+        "from_attributes": "True",
         "json_shemma_extra": {
             "examples": [
                 {
@@ -86,7 +86,7 @@ class Evaluation(EvaluationBase):
     )
 
     model_config = {
-        "orm_mode": "True",
+        "from_attributes": "True",
         "json_schema_extra": {
             "examples": [
                 {
@@ -175,7 +175,7 @@ class Member(MemberBase):
     )
 
     model_config = {
-        "orm_mode": "True",
+        "from_attributes": "True",
         "json_schema_extra": {
             "examples": [
                 {
