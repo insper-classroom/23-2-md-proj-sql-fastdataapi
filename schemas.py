@@ -2,51 +2,6 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 
-
-class PlanBase(BaseModel):
-    plan_name: str = Field(
-        description="The name of plan, like: Basic, premimum ...",
-        max_length=50,
-        examples=["Basic", "Black", "Gold"],
-    )
-    descr: str = Field(
-        description="A short description of plan",
-        max_length=300,
-        examples=["Black plan allow you to use any gym from our network"],
-    )
-    price: float = Field(
-        description="The price of plan", gt=0, examples=[100.00, 200.00, 300.00]
-    )
-
-
-class PlanCreate(PlanBase):
-    pass
-
-
-class Plan(PlanBase):
-    plan_id: int = Field(description="The id of plan", examples=["0", "1", "2"])
-
-    model_config = {
-        "from_attributes": "True",
-        "json_shemma_extra": {
-            "examples": [
-                {
-                    "plan_id": "0",
-                    "plan_name": "Basic",
-                    "descr": "Basic plan allow you to use our gym",
-                    "price": 100.00,
-                },
-                {
-                    "plan_id": "1",
-                    "plan_name": "Black",
-                    "descr": "Black plan allow you to use any gym from our network",
-                    "price": 200.00,
-                },
-            ]
-        },
-    }
-
-
 class EvaluationBase(BaseModel):
     evaluation_date: datetime = Field(
         description="The date of evaluation", le=datetime.now(), examples=["2021-01-01"]
@@ -200,3 +155,49 @@ class Member(MemberBase):
             ]
         },
     }
+
+class PlanBase(BaseModel):
+    plan_name: str = Field(
+        description="The name of plan, like: Basic, premimum ...",
+        max_length=50,
+        examples=["Basic", "Black", "Gold"],
+    )
+    descr: str = Field(
+        description="A short description of plan",
+        max_length=300,
+        examples=["Black plan allow you to use any gym from our network"],
+    )
+    price: float = Field(
+        description="The price of plan", gt=0, examples=[100.00, 200.00, 300.00]
+    )
+
+
+class PlanCreate(PlanBase):
+    pass
+
+
+class Plan(PlanBase):
+    plan_id: int = Field(description="The id of plan", examples=["0", "1", "2"])
+    members: list[Member] = []
+
+    model_config = {
+        "from_attributes": "True",
+        "json_shemma_extra": {
+            "examples": [
+                {
+                    "plan_id": "0",
+                    "plan_name": "Basic",
+                    "descr": "Basic plan allow you to use our gym",
+                    "price": 100.00,
+                },
+                {
+                    "plan_id": "1",
+                    "plan_name": "Black",
+                    "descr": "Black plan allow you to use any gym from our network",
+                    "price": 200.00,
+                },
+            ]
+        },
+    }
+
+
