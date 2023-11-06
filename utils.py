@@ -16,7 +16,7 @@ def db_create_member(db: Session, member: schemas.MemberCreate):
         email=member.email,
         phone=member.phone,
         cpf=member.cpf,
-        inscription_date=member.inscription_date,
+        incription_date=member.inscription_date,
     )
     db.add(db_member)
     db.commit()
@@ -34,7 +34,7 @@ def db_update_member(
     cpf: str | None = None,
     inscription_date: str | None = None,
 ):
-    member = db.query(models.Member).filter(models.Member.member_id == id).first()
+    member = db_get_members(db, id=member_id)
     if name is not None:
         member.name = name
     if birth_date is not None:

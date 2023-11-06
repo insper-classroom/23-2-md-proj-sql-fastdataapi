@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Path, Query
 from sqlalchemy.orm import Session
 
 import utils, models, schemas
@@ -70,7 +70,6 @@ def create_member(member: schemas.MemberCreate, db: Session = Depends(get_db)):
 
 # Atualizar os detalhes de um membro: PUT /members/{id}
 
-"""
 @app.put(
     "/member/{member_id}",
     description="Update member details by identifying it by id",
@@ -91,34 +90,14 @@ def update_member(
     cpf: Annotated[str | None, Query(title="CPF", example="12345678911")] = None,
     inscription_date: Annotated[
         str | None, Query(title="Inscription date", example="1970-01-01 00:00:00")
-    ] = None,
-) -> dict[str, Member]:
-    if member_id not in dict_members:
-        raise HTTPException(
-            status_code=404, detail=f"Member with id {member_id} does not exist"
-        )
+    ] = None, db: Session = Depends(get_db)
+) -> dict[str, schemas.Member]:
 
-    if name == birth_date == email == phone == cpf == inscription_date == None:
-        raise HTTPException(status_code=400, detail="Bad request: all params are null")
+    db_user = utils.db_get_members(db, id=member_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="Member not found")
 
-    if name is not None:
-        dict_members[member_id].name = name
-    if birth_date is not None:
-        dict_members[member_id].birth_date = datetime.datetime.strptime(
-            birth_date, "%Y-%m-%d %H:%M:%S"
-        )
-    if email is not None:
-        dict_members[member_id].email = email
-    if phone is not None:
-        dict_members[member_id].phone = phone
-    if cpf is not None:
-        dict_members[member_id].cpf = cpf
-    if inscription_date is not None:
-        dict_members[member_id].inscription_date = datetime.datetime.strptime(
-            inscription_date, "%Y-%m-%d %H:%M:%S"
-        )
-
-    return {"updated": dict_members[member_id]}
+    return {"updated": utils.db_update_member(db, member_id=member_id, name=name, birth_date=birth_date, email=email, phone=phone, cpf=cpf, inscription_date=inscription_date)}
 
 
 # Excluir um membro: DELETE /members/{id}
@@ -128,14 +107,9 @@ def update_member(
 def delete_member(
     member_id: Annotated[
         int, Path(title="Member id", description="Delete an specific member by id")
-    ]
+    ],
 ) -> None:
-    if member_id not in dict_members:
-        raise HTTPException(
-            status_code=404, detail=f"Member with id {member_id} does not exist"
-        )
-
-    del dict_members[member_id]
+    utils.db_delete_members(db, member_id)
     return
 
 
@@ -144,7 +118,7 @@ def delete_member(
 
 
 @app.get("/plans", description="List all plans")
-def get_plans() -> list[Plan]:
+def get_plans() -> list[schemas.Plan]:
     return list(dict_planos.values())
 
 
@@ -167,7 +141,7 @@ def get_plans(
 
 # Criar um novo plano: POST /plans
 @app.post("/plan", status_code=201, description="Create a new plan")
-def post_plan(plan: Plan):
+def post_plan(plan: schemas.Plan):
     if plan.plan_id in dict_planos:
         raise HTTPException(status_code=409, detail=f"Plan alredy exists")
 
@@ -191,7 +165,7 @@ def update_plan(
         ),
     ] = None,
     price: Annotated[int | None, Query(title="Price", example=200)] = None,
-) -> dict[str, Plan]:
+) -> dict[str, schemas.Plan]:
     if plan_id not in dict_planos:
         raise HTTPException(
             status_code=404, detail=f"Plan with id {plan_id} does not exist"
@@ -227,6 +201,7 @@ def update_plan(
     )
 
 
+"""
 # Membros de um Plano (Members in a Plan):
 @app.get("/plans/all_members", description="List all members in all plans")
 def query_members_by_plan() -> dict[int, list[Member]]:
