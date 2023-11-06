@@ -190,6 +190,29 @@ def delete_plan(
     utils.db_delete_plan(db, plan_id)
     return
 
+# Adicionar um membro a um plano: PUT /plans/{plan_id}/members
+@app.put("/plan/{plan_id}/members/{member_id}", description="Add a member to a plan")
+def add_member_to_plan(
+    plan_id: Annotated[
+        int,
+        Path(
+            title="Plan id", description="Id of the plan you want to add to", example=0
+        ),
+    ],
+    member_id: Annotated[
+        int,
+        Path(
+            title="Plan id", description="Id of the member you want to add", example=0
+        ),
+    ],
+    db: Session = Depends(get_db)
+) -> dict[str, schemas.Member]:
+
+    db_user = utils.db_get_members(db, id=member_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="Member not found")
+    return {"updated": utils.db_add_member_to_plan(db, member_id, plan_id)}
+
 
 """
 # Membros de um Plano (Members in a Plan):
@@ -226,31 +249,6 @@ def query_members_by_specific_plan(
             plan_members.append(dict_members[member])
     return plan_members
 
-
-# Adicionar um membro a um plano: PUT /plans/{plan_id}/members
-
-
-@app.put("/plan/{plan_id}/members/{member_id}", description="Add a member to a plan")
-def add_member_to_plan(
-    plan_id: Annotated[
-        int,
-        Path(
-            title="Plan id", description="Id of the plan you want to add to", example=0
-        ),
-    ],
-    member_id: Annotated[
-        int,
-        Path(
-            title="Plan id", description="Id of the member you want to add", example=0
-        ),
-    ],
-) -> dict[str, Member]:
-    if plan_id not in dict_planos or member_id not in dict_members:
-        raise HTTPException(
-            status_code=404, detail="One of the given IDs does not exisdkk"
-        )
-    dict_members[member_id].plan_id = plan_id
-    return {"updated": dict_members[member_id]}
 
 
 # Remover um membro de um plano: DELETE /plans/{plan_id}/members/{member_id}

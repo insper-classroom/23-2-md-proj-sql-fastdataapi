@@ -100,6 +100,12 @@ def db_delete_plan(db: Session, id: int):
     db.query(models.Plan).filter(models.Plan.plan_id == id).delete()
     db.commit()
 
+def db_add_member_to_plan(db: Session, member_id: int, plan_id:int):
+    membro = db_get_members(db, member_id)
+    membro.plan_id = plan_id
+    db.commit()
+    return membro
+
 
 def db_get_evaluation(db: Session, id: int):
     if id is not None:
