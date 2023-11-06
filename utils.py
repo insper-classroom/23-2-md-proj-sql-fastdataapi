@@ -61,13 +61,12 @@ def db_delete_members(db: Session, id: int):
 
 def db_get_plan(db: Session, id: int | None = None):
     if id is not None:
-        return db.query(models.Plan).filter(models.Member.member_id == id).first()
-    return db.query(models.Member).all()
+        return db.query(models.Plan).filter(models.Plan.plan_id == id).first()
+    return db.query(models.Plan).all()
 
 
 def db_post_plan(db: Session, plan: schemas.Plan):
-    db_plan = models.Member(
-        plan_id=plan.plan_id,
+    db_plan = models.Plan(
         plan_name=plan.plan_name,
         descr=plan.descr,
         price=plan.price,
@@ -85,7 +84,7 @@ def db_update_plan(
     descr: str | None = None,
     price: float | None = None,
 ):
-    plan = db.query(models.plan).filter(models.Plan.member_id == plan_id).first()
+    plan = db_get_plan(db, id=plan_id)
     if plan_name is not None:
         plan.plan_name = plan_name
     if descr is not None:

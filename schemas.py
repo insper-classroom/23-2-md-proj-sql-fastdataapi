@@ -25,7 +25,6 @@ class PlanCreate(PlanBase):
 
 class Plan(PlanBase):
     plan_id: int = Field(description="The id of plan", examples=["0", "1", "2"])
-    plan_owner_id: int = Field(description="The id of member", examples=["0", "1"])
 
     model_config = {
         "from_attributes": "True",

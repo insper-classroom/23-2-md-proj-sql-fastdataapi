@@ -107,7 +107,7 @@ def update_member(
 def delete_member(
     member_id: Annotated[
         int, Path(title="Member id", description="Delete an specific member by id")
-    ],
+    ], db: Session = Depends(get_db)
 ) -> None:
     utils.db_delete_members(db, member_id)
     return
@@ -118,8 +118,8 @@ def delete_member(
 
 
 @app.get("/plans", description="List all plans")
-def get_plans() -> list[schemas.Plan]:
-    return list(dict_planos.values())
+def get_plans(db: Session = Depends(get_db)) -> list[schemas.Plan]:
+    return utils.db_get_plan(db)
 
 
 # Obter detalhes de um plano específico: GET /plans/{id}
@@ -129,24 +129,18 @@ def get_plans() -> list[schemas.Plan]:
 def get_plans(
     plan_id: Annotated[
         int, Path(title="Plan id", description="Get an specific plan by id", example=0)
-    ]
+    ],db: Session = Depends(get_db)
 ):
-    if plan_id not in dict_planos:
-        raise HTTPException(
-            status_code=400, detail=f"Plan with id {plan_id} does not exist"
-        )
-
-    return {plan_id: dict_planos[plan_id]}
+    db_plan = utils.db_get_members(db, id=plan_id)
+    if db_plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    return db_plan
 
 
 # Criar um novo plano: POST /plans
 @app.post("/plan", status_code=201, description="Create a new plan")
-def post_plan(plan: schemas.Plan):
-    if plan.plan_id in dict_planos:
-        raise HTTPException(status_code=409, detail=f"Plan alredy exists")
-
-    dict_planos[plan.plan_id] = plan
-    print(dict_planos[plan.plan_id])
+def post_plan(plan: schemas.PlanCreate, db: Session = Depends(get_db)) -> dict[str, schemas.Plan]:
+    plan = utils.db_post_plan(db, plan)
     return {"added": plan}
 
 
@@ -165,23 +159,16 @@ def update_plan(
         ),
     ] = None,
     price: Annotated[int | None, Query(title="Price", example=200)] = None,
+    db: Session = Depends(get_db)
 ) -> dict[str, schemas.Plan]:
-    if plan_id not in dict_planos:
-        raise HTTPException(
-            status_code=404, detail=f"Plan with id {plan_id} does not exist"
-        )
-
     if descr == price == plan_name == None:
         raise HTTPException(status_code=400, detail="Bad request: all params are null")
 
-    if plan_name is not None:
-        dict_planos[plan_id].plan_name = plan_name
-    if descr is not None:
-        dict_planos[plan_id].descr = descr
-    if price is not None:
-        dict_planos[plan_id].price = price
+    db_plan = utils.db_get_plan(db, id=plan_id)
+    if db_plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
 
-    return {"updated": dict_planos[plan_id]}
+    return {"updated": utils.db_update_plan(db, plan_id=plan_id, plan_name=plan_name, descr=descr, price=price)}
 
 
 # Excluir um plano: DELETE /plans/{id}
