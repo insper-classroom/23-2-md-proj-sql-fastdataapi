@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Numeric
 from sqlalchemy.orm import relationship, mapped_column
 from database import Base
 
@@ -11,7 +11,7 @@ class Plan(Base):
     )
     plan_name = Column(String(100), unique=True, index=True, nullable=False)
     descr = Column(String(500), index=True, nullable=False)
-    price = Column(Float, index=True, nullable=False)
+    price = Column(Numeric(precision=10, scale=2), index=True, nullable=False)
 
     # Defina o relacionamento com a classe Member
     members = relationship("Member", back_populates="plan")
@@ -25,9 +25,9 @@ class Evaluation(Base):
 
     evaluation_id = Column(Integer, primary_key=True, index=True)
     evaluation_date = Column(DateTime, index=False, nullable=False)
-    weight = Column(Float, index=False, nullable=False)
-    height = Column(Float, index=False, nullable=False)
-    fat_percentage = Column(Float, index=True, nullable=True)
+    weight = Column(Numeric(precision=10,scale=2), index=False, nullable=False)
+    height = Column(Numeric(precision=10,scale=2), index=False, nullable=False)
+    fat_percentage = Column(Numeric(precision=10,scale=2), index=True, nullable=True)
     observation = Column(String(500), index=True, nullable=True)
 
     member_id = Column(Integer, ForeignKey("members.member_id"), nullable=False, index=True)
