@@ -119,7 +119,7 @@ class MemberBase(BaseModel):
     birth_date: datetime = Field(
         description="The birth date of member",
         le=datetime.now(),
-        examples=["1990-01-01"],
+        examples=["1999-02-01T00:00:00"],
     )
     email: str = Field(
         description="The email of member",
@@ -139,7 +139,7 @@ class MemberBase(BaseModel):
     inscription_date: datetime = Field(
         description="The date of inscription",
         le=datetime.now(),
-        examples=["2021-01-01"],
+        examples=["2021-02-01T00:00:00"],
     )
 
 
@@ -156,7 +156,7 @@ class Member(MemberBase):
             [
                 {
                     "evaluation_id": "0",
-                    "evaluation_date": "2021-01-01",
+                    "evaluation_date": "2021-02-01T00:00:00",
                     "weight": 70.5,
                     "height": 1.70,
                     "fat_percentage": 15.0,
@@ -164,7 +164,7 @@ class Member(MemberBase):
                 },
                 {
                     "evaluation_id": "1",
-                    "evaluation_date": "2021-02-01",
+                    "evaluation_date": "2021-02-01T00:00:00",
                     "weight": 50.0,
                     "height": 1.53,
                     "fat_percentage": 20.0,

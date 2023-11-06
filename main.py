@@ -30,8 +30,8 @@ def root():
 @app.get(
     "/members/", response_model=list[schemas.Member], description="List all members"
 )
-def get_all_members(skip: int = 0, db: Session = Depends(get_db)):
-    members = utils.db_get_members(db, skip=skip)
+def get_all_members(db: Session = Depends(get_db)):
+    members = utils.db_get_members(db)
     return members
 
 

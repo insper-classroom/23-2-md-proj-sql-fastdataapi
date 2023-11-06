@@ -11,14 +11,12 @@ def db_get_members(db: Session, id: int | None = None):
 
 def db_create_member(db: Session, member: schemas.MemberCreate):
     db_member = models.Member(
-        # member_id=member.member_id,
         name=member.name,
         birth_date=member.birth_date,
         email=member.email,
         phone=member.phone,
         cpf=member.cpf,
         inscription_date=member.inscription_date,
-        # plan_id=member.plan_id,
     )
     db.add(db_member)
     db.commit()
