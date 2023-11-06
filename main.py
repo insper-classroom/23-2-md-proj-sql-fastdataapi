@@ -109,6 +109,9 @@ def delete_member(
         int, Path(title="Member id", description="Delete an specific member by id")
     ], db: Session = Depends(get_db)
 ) -> None:
+    db_user = utils.db_get_members(db, id=member_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="Member not found")
     utils.db_delete_members(db, member_id)
     return
 
@@ -175,17 +178,17 @@ def update_plan(
 
 
 @app.delete("/plan/{plan_id}", status_code=204)
-def update_plan(
+def delete_plan(
     plan_id: Annotated[
         int, Path(title="Plan id", description="Delete an specific plan by id")
-    ]
+    ],
+    db: Session = Depends(get_db)
 ):
-    if plan_id in dict_planos:
-        del dict_planos[plan_id]
-        return
-    raise HTTPException(
-        status_code=404, detail=f"Plan with id {plan_id} does not exist"
-    )
+    db_plan = utils.db_get_plan(db, id=plan_id)
+    if db_plan is None:
+        raise HTTPException(status_code=404, detail="plan not found")
+    utils.db_delete_plan(db, plan_id)
+    return
 
 
 """

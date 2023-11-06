@@ -96,8 +96,8 @@ def db_update_plan(
     return plan
 
 
-def db_remove_plan(db: Session, id: int):
-    db.query(models.Plan).filter(models.Plan.member_id == id).delete()
+def db_delete_plan(db: Session, id: int):
+    db.query(models.Plan).filter(models.Plan.plan_id == id).delete()
     db.commit()
 
 
