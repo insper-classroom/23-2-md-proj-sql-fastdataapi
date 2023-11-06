@@ -44,6 +44,12 @@ def get_member(member_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
+# Obter detalhes de um membro por nome: GET /members/{nome}
+@app.get("/member/name/{member_name}", response_model=list[schemas.Member])
+def get_member(member_name: str, db: Session = Depends(get_db)):
+    db_user = utils.db_get_members_name(db, name=member_name)
+    return db_user
+
 # Criar um novo membro: POST /members
 @app.post(
     "/member/",
@@ -211,6 +217,9 @@ def add_member_to_plan(
     db_user = utils.db_get_members(db, id=member_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="Member not found")
+    db_plan = utils.db_get_plan(db, id=plan_id)
+    if db_plan is None:
+        raise HTTPException(status_code=404, detail="Plan not found")
     return {"updated": utils.db_add_member_to_plan(db, member_id, plan_id)}
 
 

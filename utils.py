@@ -8,6 +8,8 @@ def db_get_members(db: Session, id: int | None = None):
         return db.query(models.Member).filter(models.Member.member_id == id).first()
     return db.query(models.Member).all()
 
+def db_get_members_name(db: Session, name: str):
+    return db.query(models.Member).filter(models.Member.name.like(f"%{name}%")).all()
 
 def db_create_member(db: Session, member: schemas.MemberCreate):
     db_member = models.Member(
