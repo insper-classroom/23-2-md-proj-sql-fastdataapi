@@ -16,7 +16,7 @@ def db_create_member(db: Session, member: schemas.MemberCreate):
         email=member.email,
         phone=member.phone,
         cpf=member.cpf,
-        incription_date=member.inscription_date,
+        inscription_date=member.inscription_date,
     )
     db.add(db_member)
     db.commit()

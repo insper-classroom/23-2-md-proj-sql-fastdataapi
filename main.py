@@ -126,7 +126,7 @@ def get_plans(db: Session = Depends(get_db)) -> list[schemas.Plan]:
 
 
 @app.get("/plan/{plan_id}")
-def get_plans(
+def get_plan(
     plan_id: Annotated[
         int, Path(title="Plan id", description="Get an specific plan by id", example=0)
     ],db: Session = Depends(get_db)
