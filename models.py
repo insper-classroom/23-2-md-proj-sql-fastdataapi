@@ -29,7 +29,7 @@ class Member(Base):
     phone = Column(String(50), unique=True, index=False, nullable=True)
     cpf = Column(String(50), unique=True, index=False, nullable=False)
     inscription_date = Column(DateTime, index=False, nullable=False)
-    plan_id = Column(Integer, ForeignKey("plans.plan_id"), nullable=True)
+    plan_id = Column(Integer, ForeignKey("plans.plan_id", ondelete="CASCADE"), nullable=True)
 
     # Defina o relacionamento com a classe Plan
-    plan = relationship("Plan", back_populates="members")
+    plan = relationship("Plan", back_populates="members", cascade="all, delete")

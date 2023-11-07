@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 import datetime
 import models, schemas
@@ -14,18 +15,21 @@ def db_get_members_name(db: Session, name: str):
 
 
 def db_create_member(db: Session, member: schemas.MemberCreate):
-    db_member = models.Member(
-        name=member.name,
-        birth_date=member.birth_date,
-        email=member.email,
-        phone=member.phone,
-        cpf=member.cpf,
-        inscription_date=member.inscription_date,
-    )
-    db.add(db_member)
-    db.commit()
-    db.refresh(db_member)
-    return db_member
+    try:
+        db_member = models.Member(
+            name=member.name,
+            birth_date=member.birth_date,
+            email=member.email,
+            phone=member.phone,
+            cpf=member.cpf,
+            inscription_date=member.inscription_date,
+        )
+        db.add(db_member)
+        db.commit()
+        db.refresh(db_member)
+        return db_member
+    except:
+        raise HTTPException(status_code=409, detail="Cannot create member")
 
 
 def db_update_member(
@@ -68,17 +72,22 @@ def db_get_plan(db: Session, id: int | None = None):
         return db.query(models.Plan).filter(models.Plan.plan_id == id).first()
     return db.query(models.Plan).all()
 
+def db_get_plan_name(db: Session, name: str):
+    return db.query(models.Plan).filter(models.Plan.plan_name.like(f"%{name}%")).all()
 
 def db_post_plan(db: Session, plan: schemas.Plan):
-    db_plan = models.Plan(
-        plan_name=plan.plan_name,
-        descr=plan.descr,
-        price=plan.price,
-    )
-    db.add(db_plan)
-    db.commit()
-    db.refresh(db_plan)
-    return db_plan
+    try:
+        db_plan = models.Plan(
+            plan_name=plan.plan_name,
+            descr=plan.descr,
+            price=plan.price,
+        )
+        db.add(db_plan)
+        db.commit()
+        db.refresh(db_plan)
+        return db_plan
+    except:
+        raise HTTPException(status_code=409, detail="Cannot create member")
 
 
 def db_update_plan(
@@ -108,5 +117,11 @@ def db_delete_plan(db: Session, id: int):
 def db_add_member_to_plan(db: Session, member_id: int, plan_id: int):
     membro = db_get_members(db, member_id)
     membro.plan_id = plan_id
+    db.commit()
+    return membro
+
+def db_remove_plan_from_member(db: Session, member_id: int):
+    membro = db_get_members(db, member_id)
+    membro.plan_id = None
     db.commit()
     return membro
