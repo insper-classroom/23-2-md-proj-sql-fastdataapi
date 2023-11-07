@@ -146,12 +146,6 @@ def get_plan(
     return db_plan
 
 
-@app.get("/plan/name/{plan_name}", response_model=list[schemas.Member], tags=["Plans"])
-def get_plan_name(plan: str, db: Session = Depends(get_db)):
-    db_plan = utils.db_get_plan_name(db, name=plan)
-    return db_plan
-
-
 # Criar um novo plano: POST /plans
 @app.post("/plan", status_code=201, description="Create a new plan", tags=["Plans"])
 def post_plan(
