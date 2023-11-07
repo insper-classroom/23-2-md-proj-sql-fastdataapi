@@ -11,7 +11,7 @@ def db_get_members(db: Session, id: int | None = None):
 
 
 def db_get_members_name(db: Session, name: str):
-    return db.query(models.Member).filter(models.Member.name.like(f"%{name}%")).all()
+    return db.query(models.Member).filter(models.Member.name == name).all()
 
 
 def db_create_member(db: Session, member: schemas.MemberCreate):
@@ -73,7 +73,7 @@ def db_get_plan(db: Session, id: int | None = None):
     return db.query(models.Plan).all()
 
 def db_get_plan_name(db: Session, name: str):
-    return db.query(models.Plan).filter(models.Plan.plan_name.like(f"%{name}%")).all()
+    return db.query(models.Plan).filter(models.Plan.plan_name == name).all()
 
 def db_post_plan(db: Session, plan: schemas.Plan):
     try:
