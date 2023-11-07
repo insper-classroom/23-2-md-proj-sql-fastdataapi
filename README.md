@@ -61,5 +61,5 @@ This command will start the server and create the necessary tables in the databa
 
 ## Video test
 
-For a quick demonstration, you can watch this [Video](https://youtu.be/Az_mCKDdyrk) to see the project in action. 
+[A demo of this project can be viewed here](https://youtu.be/r0gUSQO9qgE)
 
