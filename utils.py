@@ -108,38 +108,3 @@ def db_add_member_to_plan(db: Session, member_id: int, plan_id:int):
     db.commit()
     return membro
 
-
-def db_get_evaluation(db: Session, id: int):
-    if id is not None:
-        return (
-            db.query(models.Evaluation)
-            .filter(models.Evaluation.evaluation_id == id)
-            .first()
-        )
-    return db.query(models.Evaluation).all()
-
-
-def db_get_evaluation(db: Session, id: int):
-    if id is not None:
-        return (
-            db.query(models.Evaluation)
-            .filter(models.Evaluation.evaluation_owner_id == id)
-            .all()
-        )
-    return db.query(models.Member).all()
-
-
-def db_create_workout_evaluation(db: Session, evaluation: schemas.Evaluation):
-    db_eval = models.Evaluation(
-        evaluation_id=evaluation.evaluation_id,
-        evaluation_owner_id=evaluation.evaluation_owner_id,
-        evaluation_date=evaluation.evaluation_date,
-        weight=evaluation.weight,
-        height=evaluation.height,
-        fat_percentage=evaluation.fat_percentage,
-        observation=evaluation.observation,
-    )
-    db.add(db_eval)
-    db.commit()
-    db.refresh(db_eval)
-    return db_eval

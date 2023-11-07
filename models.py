@@ -17,20 +17,6 @@ class Plan(Base):
     members = relationship("Member", back_populates="plan")
 
 
-class Evaluation(Base):
-    __tablename__ = "evaluations"
-
-    evaluation_id = Column(Integer, primary_key=True, index=True)
-    evaluation_date = Column(DateTime, index=False, nullable=False)
-    weight = Column(Numeric(precision=10, scale=2), index=False, nullable=False)
-    height = Column(Numeric(precision=10, scale=2), index=False, nullable=False)
-    fat_percentage = Column(Numeric(precision=10, scale=2), index=True, nullable=True)
-    observation = Column(String(500), index=True, nullable=True)
-
-    member_id = Column(
-        Integer, ForeignKey("members.member_id"), nullable=False, index=True
-    )
-
 
 class Member(Base):
     __tablename__ = "members"
@@ -49,4 +35,3 @@ class Member(Base):
     # Defina o relacionamento com a classe Plan
     plan = relationship("Plan", back_populates="members")
 
-    evaluations = relationship("Evaluation", foreign_keys=[Evaluation.member_id])
