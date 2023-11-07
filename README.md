@@ -1,4 +1,4 @@
-# 23-2-md-proj-sql-fastdataapi
+s+-# 23-2-md-proj-sql-fastdataapi
 
 ## Students
 - Arthur Barreto
@@ -29,7 +29,7 @@ to upgrade virtual enviroment to python `3.11.5`.
 
 Open MySQL Workbench and create a connection. Note down the database password.
 
-In the `.env.example` file, update the database connection information as follows:
+In the `.env.example` file, update the database connection information as follows, but with the appropriate information:
 
 ```bash
 DATABASE_USER='algum_user'
