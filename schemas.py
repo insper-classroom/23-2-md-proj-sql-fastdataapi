@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 
+
 class MemberBase(BaseModel):
     name: str = Field(
         description="Full name of the member",
@@ -61,6 +62,7 @@ class Member(MemberBase):
         },
     }
 
+
 class PlanBase(BaseModel):
     plan_name: str = Field(
         description="The name of plan, like: Basic, premimum ...",
@@ -104,5 +106,3 @@ class Plan(PlanBase):
             ]
         },
     }
-
-

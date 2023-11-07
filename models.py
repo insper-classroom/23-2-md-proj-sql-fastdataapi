@@ -17,7 +17,6 @@ class Plan(Base):
     members = relationship("Member", back_populates="plan")
 
 
-
 class Member(Base):
     __tablename__ = "members"
 
@@ -34,4 +33,3 @@ class Member(Base):
 
     # Defina o relacionamento com a classe Plan
     plan = relationship("Plan", back_populates="members")
-

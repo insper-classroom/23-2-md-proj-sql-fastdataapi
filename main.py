@@ -50,6 +50,7 @@ def get_member(member_name: str, db: Session = Depends(get_db)):
     db_user = utils.db_get_members_name(db, name=member_name)
     return db_user
 
+
 # Criar um novo membro: POST /members
 @app.post(
     "/member/",
@@ -58,24 +59,14 @@ def get_member(member_name: str, db: Session = Depends(get_db)):
     response_model=schemas.MemberCreate,
 )
 def create_member(member: schemas.MemberCreate, db: Session = Depends(get_db)):
-    # pseudo_member_id = utils.db_get_members(db, id=member.member_id)
-    
-    # print(f'pseudo_member_id: {pseudo_member_id}')
-
-    # if pseudo_member_id is not None:
-    #     raise HTTPException(
-    #         status_code=409, detail=f"Member with id {member.member_id} already exists"
-    #     )
-
     db_member = utils.db_create_member(db, member)
-    
-    print(f'db_member: {db_member}')
+
+    print(f"db_member: {db_member}")
 
     return db_member
 
 
 # Atualizar os detalhes de um membro: PUT /members/{id}
-
 @app.put(
     "/member/{member_id}",
     description="Update member details by identifying it by id",
@@ -96,24 +87,34 @@ def update_member(
     cpf: Annotated[str | None, Query(title="CPF", example="12345678911")] = None,
     inscription_date: Annotated[
         str | None, Query(title="Inscription date", example="1970-01-01 00:00:00")
-    ] = None, db: Session = Depends(get_db)
+    ] = None,
+    db: Session = Depends(get_db),
 ) -> dict[str, schemas.Member]:
-
     db_user = utils.db_get_members(db, id=member_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="Member not found")
 
-    return {"updated": utils.db_update_member(db, member_id=member_id, name=name, birth_date=birth_date, email=email, phone=phone, cpf=cpf, inscription_date=inscription_date)}
+    return {
+        "updated": utils.db_update_member(
+            db,
+            member_id=member_id,
+            name=name,
+            birth_date=birth_date,
+            email=email,
+            phone=phone,
+            cpf=cpf,
+            inscription_date=inscription_date,
+        )
+    }
 
 
 # Excluir um membro: DELETE /members/{id}
-
-
 @app.delete("/member/{member_id}", status_code=204)
 def delete_member(
     member_id: Annotated[
         int, Path(title="Member id", description="Delete an specific member by id")
-    ], db: Session = Depends(get_db)
+    ],
+    db: Session = Depends(get_db),
 ) -> None:
     db_user = utils.db_get_members(db, id=member_id)
     if db_user is None:
@@ -124,21 +125,18 @@ def delete_member(
 
 # Planos (Plans):
 # Listar todos os planos: GET /plans
-
-
 @app.get("/plans", description="List all plans")
 def get_plans(db: Session = Depends(get_db)) -> list[schemas.Plan]:
     return utils.db_get_plan(db)
 
 
 # Obter detalhes de um plano específico: GET /plans/{id}
-
-
 @app.get("/plan/{plan_id}")
 def get_plan(
     plan_id: Annotated[
         int, Path(title="Plan id", description="Get an specific plan by id", example=0)
-    ],db: Session = Depends(get_db)
+    ],
+    db: Session = Depends(get_db),
 ):
     db_plan = utils.db_get_members(db, id=plan_id)
     if db_plan is None:
@@ -148,14 +146,14 @@ def get_plan(
 
 # Criar um novo plano: POST /plans
 @app.post("/plan", status_code=201, description="Create a new plan")
-def post_plan(plan: schemas.PlanCreate, db: Session = Depends(get_db)) -> dict[str, schemas.Plan]:
+def post_plan(
+    plan: schemas.PlanCreate, db: Session = Depends(get_db)
+) -> dict[str, schemas.Plan]:
     plan = utils.db_post_plan(db, plan)
     return {"added": plan}
 
 
 # Atualizar os detalhes de um plano: PUT /plans/{id}. O que será atualizado é passado nos parametros
-
-
 @app.put("/plan/{plan_id}", description="Update plan details by identifying it by id")
 def update_plan(
     plan_id: Annotated[int, Path(title="Plan id", example=0)],
@@ -168,7 +166,7 @@ def update_plan(
         ),
     ] = None,
     price: Annotated[int | None, Query(title="Price", example=200)] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ) -> dict[str, schemas.Plan]:
     if descr == price == plan_name == None:
         raise HTTPException(status_code=400, detail="Bad request: all params are null")
@@ -177,24 +175,27 @@ def update_plan(
     if db_plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
-    return {"updated": utils.db_update_plan(db, plan_id=plan_id, plan_name=plan_name, descr=descr, price=price)}
+    return {
+        "updated": utils.db_update_plan(
+            db, plan_id=plan_id, plan_name=plan_name, descr=descr, price=price
+        )
+    }
 
 
 # Excluir um plano: DELETE /plans/{id}
-
-
 @app.delete("/plan/{plan_id}", status_code=204)
 def delete_plan(
     plan_id: Annotated[
         int, Path(title="Plan id", description="Delete an specific plan by id")
     ],
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     db_plan = utils.db_get_plan(db, id=plan_id)
     if db_plan is None:
         raise HTTPException(status_code=404, detail="plan not found")
     utils.db_delete_plan(db, plan_id)
     return
+
 
 # Adicionar um membro a um plano: PUT /plans/{plan_id}/members
 @app.put("/plan/{plan_id}/members/{member_id}", description="Add a member to a plan")
@@ -211,9 +212,8 @@ def add_member_to_plan(
             title="Plan id", description="Id of the member you want to add", example=0
         ),
     ],
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ) -> dict[str, schemas.Member]:
-
     db_user = utils.db_get_members(db, id=member_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="Member not found")
@@ -221,80 +221,3 @@ def add_member_to_plan(
     if db_plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
     return {"updated": utils.db_add_member_to_plan(db, member_id, plan_id)}
-
-
-"""
-# Membros de um Plano (Members in a Plan):
-@app.get("/plans/all_members", description="List all members in all plans")
-def query_members_by_plan() -> dict[int, list[Member]]:
-    dic = {}
-    for plan in dict_planos:
-        dic[plan] = []
-        for member in dict_members:
-            if dict_members[member].plan_id == plan:
-                dic[plan].append(dict_members[member])
-    return dic
-
-
-# Listar todos os membros de um plano específico: GET /plans/{plan_id}/members
-@app.get("/plan/{plan_id}/members", description="List all members in a specific plan")
-def query_members_by_specific_plan(
-    plan_id: Annotated[
-        int,
-        Path(
-            title="Plan id",
-            description="Id of the plan you want to get the members of",
-            example=0,
-        ),
-    ]
-) -> list[Member]:
-    if plan_id not in dict_planos:
-        raise HTTPException(
-            status_code=404, detail=f"Plan with id {plan_id} does not exist"
-        )
-    plan_members = []
-    for member in dict_members:
-        if dict_members[member].plan_id == plan_id:
-            plan_members.append(dict_members[member])
-    return plan_members
-
-
-
-# Remover um membro de um plano: DELETE /plans/{plan_id}/members/{member_id}
-
-
-@app.delete(
-    "/plan/{plan_id}/members/{member_id}",
-    description="Remove a member from a plan",
-    status_code=204,
-)
-def delete_member(
-    plan_id: Annotated[
-        int,
-        Path(
-            title="Plan id",
-            description="Id of the plan you want to delete from",
-            example=0,
-        ),
-    ],
-    member_id: Annotated[
-        int,
-        Path(
-            title="Member id",
-            description="Id of the member you want to delete",
-            example=0,
-        ),
-    ],
-) -> None:
-    if plan_id not in dict_planos or member_id not in dict_members:
-        raise HTTPException(
-            status_code=404, detail="One of the given IDs does not exisdkk"
-        )
-    if dict_members[member_id].plan_id != plan_id:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Member {member_id} does not have the plan {dict_planos[plan_id].plan_name}",
-        )
-    dict_members[member_id].plan_id = None
-    return
-"""

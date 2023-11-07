@@ -8,8 +8,10 @@ def db_get_members(db: Session, id: int | None = None):
         return db.query(models.Member).filter(models.Member.member_id == id).first()
     return db.query(models.Member).all()
 
+
 def db_get_members_name(db: Session, name: str):
     return db.query(models.Member).filter(models.Member.name.like(f"%{name}%")).all()
+
 
 def db_create_member(db: Session, member: schemas.MemberCreate):
     db_member = models.Member(
@@ -102,9 +104,9 @@ def db_delete_plan(db: Session, id: int):
     db.query(models.Plan).filter(models.Plan.plan_id == id).delete()
     db.commit()
 
-def db_add_member_to_plan(db: Session, member_id: int, plan_id:int):
+
+def db_add_member_to_plan(db: Session, member_id: int, plan_id: int):
     membro = db_get_members(db, member_id)
     membro.plan_id = plan_id
     db.commit()
     return membro
-
